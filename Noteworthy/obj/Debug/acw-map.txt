@@ -1,4 +1,0 @@
-Noteworthy.MainActivity, Noteworthy;md5247f0d476a1e590e801e4ea33cb11ad8.MainActivity
-Noteworthy.MainActivity, Noteworthy, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5247f0d476a1e590e801e4ea33cb11ad8.MainActivity
-Noteworthy.MainActivity;md5247f0d476a1e590e801e4ea33cb11ad8.MainActivity
-noteworthy.MainActivity;md5247f0d476a1e590e801e4ea33cb11ad8.MainActivity
