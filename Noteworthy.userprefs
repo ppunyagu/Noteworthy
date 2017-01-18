@@ -1,0 +1,13 @@
+﻿<Properties StartupConfiguration="{6EACD732-C288-41F9-8204-BFAEA548C971}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Noteworthy/MainActivity.cs">
+    <Files>
+      <File FileName="Noteworthy/MainActivity.cs" Line="11" Column="3" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.Noteworthy PreferredExecutionTarget="Android.Android" />
+</Properties>
