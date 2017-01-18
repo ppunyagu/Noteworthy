@@ -1,12 +1,8 @@
 ﻿<Properties StartupConfiguration="{754B498E-59E6-42F9-AA88-EED0215AA460}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="Noteworthy/MainActivity.cs">
     <Files>
-      <File FileName="Noteworthy2/MainActivity.cs" Line="5" Column="21" />
-      <File FileName="Noteworthy2/packages.config" Line="5" Column="12" />
-      <File FileName="Noteworthy2/BackgroundService.cs" Line="23" Column="4" />
       <File FileName="../../snapbag/Snapbag.Android/Activity/SnapSpinoff/MainSnapActivity.cs" Line="1" Column="1" />
       <File FileName="../../snapbag/Snapbag.Android/QR/SnapQRApplication.cs" Line="234" Column="22" />
-      <File FileName="Noteworthy2/NoteworthyApplication.cs" Line="17" Column="31" />
       <File FileName="Noteworthy/MainActivity.cs" Line="12" Column="21" />
     </Files>
   </MonoDevelop.Ide.Workbench>
