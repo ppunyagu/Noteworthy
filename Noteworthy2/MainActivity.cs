@@ -4,7 +4,7 @@ using Android.OS;
 
 namespace Noteworthy2
 {
-	[Activity(Label = "Noteworthy2", MainLauncher = true, Icon = "@mipmap/icon")]
+	[Activity(Label = "Noteworthy", MainLauncher = true, Icon = "@mipmap/icon")]
 	public class MainActivity : Activity
 	{
 		int count = 1;

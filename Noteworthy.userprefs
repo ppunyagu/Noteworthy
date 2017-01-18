@@ -1,9 +1,15 @@
 ﻿<Properties StartupConfiguration="{6B11270F-C476-4A15-B5CB-8BB25113242A}|Default">
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Noteworthy2/Properties/AndroidManifest.xml">
+    <Files>
+      <File FileName="Noteworthy2/MainActivity.cs" Line="17" Column="28" />
+      <File FileName="Noteworthy2/packages.config" Line="1" Column="1" />
+      <File FileName="Noteworthy2/Properties/AndroidManifest.xml" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.Noteworthy2 PreferredExecutionTarget="Android.4d00021b6fff3089" />
+  <MonoDevelop.Ide.ItemProperties.Noteworthy PreferredExecutionTarget="Android.4d00021b6fff3089" />
 </Properties>
