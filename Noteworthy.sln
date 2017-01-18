@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noteworthy", "Noteworthy2\Noteworthy.csproj", "{6B11270F-C476-4A15-B5CB-8BB25113242A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noteworthy", "Noteworthy\Noteworthy.csproj", "{754B498E-59E6-42F9-AA88-EED0215AA460}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,9 +9,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6B11270F-C476-4A15-B5CB-8BB25113242A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B11270F-C476-4A15-B5CB-8BB25113242A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B11270F-C476-4A15-B5CB-8BB25113242A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B11270F-C476-4A15-B5CB-8BB25113242A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{754B498E-59E6-42F9-AA88-EED0215AA460}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{754B498E-59E6-42F9-AA88-EED0215AA460}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{754B498E-59E6-42F9-AA88-EED0215AA460}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{754B498E-59E6-42F9-AA88-EED0215AA460}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

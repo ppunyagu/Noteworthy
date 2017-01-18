@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.noteworthy.noteworthy2;
+package com.noteworthy.noteworthy;
 
 public final class R {
     public static final class attr {

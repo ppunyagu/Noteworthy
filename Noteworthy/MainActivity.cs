@@ -2,7 +2,7 @@
 using Android.Widget;
 using Android.OS;
 
-namespace Noteworthy2
+namespace Noteworthy
 {
 	[Activity(Label = "Noteworthy", MainLauncher = true, Icon = "@mipmap/icon")]
 	public class MainActivity : Activity
