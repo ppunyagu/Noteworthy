@@ -1,9 +1,17 @@
 ﻿<Properties StartupConfiguration="{754B498E-59E6-42F9-AA88-EED0215AA460}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Noteworthy/MainActivity.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="../../snapbag/Snapbag/HelperClasses/S3Utils.cs">
     <Files>
-      <File FileName="../../snapbag/Snapbag.Android/Activity/SnapSpinoff/MainSnapActivity.cs" Line="1" Column="1" />
-      <File FileName="../../snapbag/Snapbag.Android/QR/SnapQRApplication.cs" Line="234" Column="22" />
-      <File FileName="Noteworthy/MainActivity.cs" Line="12" Column="21" />
+      <File FileName="Noteworthy/MainActivity.cs" Line="44" Column="23" />
+      <File FileName="Noteworthy/NoteworthyApplication.cs" Line="23" Column="73" />
+      <File FileName="Noteworthy/BackgroundService.cs" Line="22" Column="20" />
+      <File FileName="Noteworthy/NoteWakefulReceiver.cs" Line="23" Column="92" />
+      <File FileName="../../snapbag/Snapbag.Android/QR/ScreenshotTakenReceiver.cs" Line="54" Column="32" />
+      <File FileName="../../snapbag/SNAPQR/SNAPQR.Droid.Shared/Services/ScreenshotDetectionService.cs" Line="117" Column="64" />
+      <File FileName="Noteworthy/NoteReceiver.cs" Line="12" Column="22" />
+      <File FileName="../../snapbag/Snapbag.Android/QR/SnapQRApplication.cs" Line="192" Column="29" />
+      <File FileName="../../snapbag/Snapbag.Android/Activity/SnapSpinoff/MainSnapActivity.cs" Line="43" Column="61" />
+      <File FileName="Noteworthy/Properties/AndroidManifest.xml" Line="8" Column="45" />
+      <File FileName="../../snapbag/Snapbag/HelperClasses/S3Utils.cs" Line="17" Column="10" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
@@ -11,5 +19,5 @@
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.Noteworthy PreferredExecutionTarget="Android.4d00021b6fff3089" />
+  <MonoDevelop.Ide.ItemProperties.Noteworthy AndroidDesignerPreferredDevice="Nexus 4" PreferredExecutionTarget="Android.4d00021b6fff3089" />
 </Properties>
