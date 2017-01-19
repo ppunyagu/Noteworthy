@@ -1,19 +1,12 @@
 ﻿<Properties StartupConfiguration="{754B498E-59E6-42F9-AA88-EED0215AA460}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Noteworthy/GetWebPulseService.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="../../snapbag/Snapbag.Android/AppStart.cs">
     <Files>
-      <File FileName="Noteworthy/MainActivity.cs" Line="36" Column="22" />
-      <File FileName="Noteworthy/BackgroundService.cs" Line="10" Column="21" />
-      <File FileName="Noteworthy/GetWebPulseService.cs" Line="14" Column="4" />
-      <File FileName="Noteworthy/NoteReceiver.cs" Line="24" Column="40" />
-      <File FileName="../../snapbag/Snapbag.Android/QR/ScreenshotTakenReceiver.cs" Line="29" Column="96" />
+      <File FileName="../../snapbag/Snapbag/HelperClasses/Utility.cs" Line="553" Column="4" />
+      <File FileName="Noteworthy/Utility.cs" Line="78" Column="5" />
+      <File FileName="Noteworthy/SQLClient.cs" Line="27" Column="37" />
       <File FileName="Noteworthy/NoteworthyApplication.cs" Line="23" Column="73" />
-      <File FileName="../../snapbag/Snapbag.Android/QR/SnapQRApplication.cs" Line="192" Column="29" />
-      <File FileName="../../snapbag/Snapbag.Android/Activity/SnapSpinoff/MainSnapActivity.cs" Line="43" Column="61" />
-      <File FileName="Noteworthy/Properties/AndroidManifest.xml" Line="8" Column="45" />
-      <File FileName="../../snapbag/Snapbag/HelperClasses/S3Utils.cs" Line="20" Column="37" />
-      <File FileName="../../snapbag/Snapbag/HelperClasses/ImageSearchService.cs" Line="1" Column="1" />
-      <File FileName="../../snapbag/Snapbag/Services/BaseService.cs" Line="158" Column="17" />
-      <File FileName="../../snapbag/Snapbag/HelperClasses/SQLClient.cs" Line="15" Column="3" />
+      <File FileName="Noteworthy/MainActivity.cs" Line="23" Column="51" />
+      <File FileName="../../snapbag/Snapbag.Android/AppStart.cs" Line="48" Column="13" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
