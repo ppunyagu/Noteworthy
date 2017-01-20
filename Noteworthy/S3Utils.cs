@@ -119,7 +119,7 @@ namespace Noteworthy
 		{
 			try
 			{
-				var objS3Client = S3Utils.S3Client;
+				var objS3Client = S3Client;
 
 				if (string.IsNullOrWhiteSpace(bucketname))
 				{

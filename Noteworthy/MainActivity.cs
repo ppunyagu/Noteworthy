@@ -2,6 +2,7 @@
 using Android.Widget;
 using Android.OS;
 using Android.Media;
+using System;
 
 namespace Noteworthy
 {
@@ -15,74 +16,88 @@ namespace Noteworthy
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
-			base.OnCreate(savedInstanceState);
+			try
+			{
+				base.OnCreate(savedInstanceState);
+				SetContentView(Resource.Layout.Main);
 
-			// Set our view from the "main" layout resource
-			SetContentView(Resource.Layout.Main);
+				NoteworthyApplication.StartBackgroundService();
 
-			NoteworthyApplication.StartBackgroundService();
+				//DataBase Initalize
+				Utility.InitializeDatabase();
 
-			//DataBase Initalize
-			Utility.InitializeDatabase();
+				// Get our button from the layout resource,
+				// and attach an event to it
+				Button button = FindViewById<Button>(Resource.Id.myButton);
+				button.Text = "Record";
+				IsRecording = false;
 
-			// Get our button from the layout resource,
-			// and attach an event to it
-			Button button = FindViewById<Button>(Resource.Id.myButton);
-			button.Text = "Record";
-			IsRecording = false;
-
-
-			button.Click += delegate {
-				if (!IsRecording)
+				button.Click += delegate
 				{
-					button.Text = "Record";
-					IsRecording = true;
-					_recorder.SetAudioSource(AudioSource.Mic);
-					_recorder.SetOutputFormat(OutputFormat.ThreeGpp);
-					_recorder.SetAudioEncoder(AudioEncoder.Default);
-					_recorder.SetOutputFile(path);
-					_recorder.Prepare();
-					_recorder.Start();
-				}
-				else {
-					button.Text = "Stop Recording";
-					IsRecording = false;
-					_recorder.Stop();
-					_recorder.Reset();
-					S3Utils.UploadS3Audios(path, "Audio");
-					/*
-					_player.SetDataSource(path);
-					_player.Prepare();
-					_player.Start();
-					*/
-				}
-			};
+					if (!IsRecording)
+					{
+						button.Text = "Record";
+						IsRecording = true;
+						_recorder.SetAudioSource(AudioSource.Mic);
+						_recorder.SetOutputFormat(OutputFormat.ThreeGpp);
+						_recorder.SetAudioEncoder(AudioEncoder.Default);
+						_recorder.SetOutputFile(path);
+						_recorder.Prepare();
+						_recorder.Start();
+					}
+					else {
+						button.Text = "Stop Recording";
+						IsRecording = false;
+						_recorder.Stop();
+						_recorder.Reset();
+						/*
+						_player.SetDataSource(path);
+						_player.Prepare();
+						_player.Start();
+						*/
+					}
+				};
+
+
+			}
+			catch (Exception ex)
+			{
+				Utility.ExceptionHandler(Class.SimpleName, "OnCreate", ex);
+			}
 		}
 
 		protected override void OnResume()
 		{
-			base.OnResume();
-
-			_recorder = new MediaRecorder();
-			_player = new MediaPlayer();
-
-			_player.Completion += (sender, e) =>
+			try
 			{
-				_player.Reset();
-			};
+				base.OnResume();
 
+				_recorder = new MediaRecorder();
+				_player = new MediaPlayer();
+			}
+			catch (Exception ex)
+			{
+				Utility.ExceptionHandler(Class.SimpleName, "OnResume", ex);
+			}
 		}
 
 		protected override void OnPause()
 		{
-			base.OnPause();
+			try
+			{
+				base.OnPause();
 
-			_player.Release();
-			_recorder.Release();
-			_player.Dispose();
-			_recorder.Dispose();
-			_player = null;
-			_recorder = null;
+				_player.Release();
+				_recorder.Release();
+				_player.Dispose();
+				_recorder.Dispose();
+				_player = null;
+				_recorder = null;
+			}
+			catch (Exception ex)
+			{
+				Utility.ExceptionHandler(Class.SimpleName, "OnPause", ex);
+			}
 		}
 	}
 }

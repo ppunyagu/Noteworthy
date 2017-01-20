@@ -12,6 +12,7 @@ using Android.Preferences;
 using Android.Util;
 using Android.Content;
 using Android.App;
+using Android.Support.V7.Widget;
 
 namespace Noteworthy
 {
@@ -108,6 +109,40 @@ namespace Noteworthy
 		public static void ExceptionHandler(string fileName, string methodName, Exception ex)
 		{
 			Log.Error(string.Format("{0}-{1}", fileName, methodName), string.Format("Error: {0}", ex));
+		}
+
+		public static GridLayoutManager RecyclerViewUI(RecyclerView recyclerView, Activity activity)
+		{
+			try
+			{
+				GridLayoutManager gridmanager = new GridLayoutManager(activity, 2);
+				recyclerView.AddItemDecoration(new GridSpacingItemDecoration());
+				recyclerView.SetLayoutManager(gridmanager);
+				return gridmanager;
+			}
+			catch (Exception ex)
+			{
+				Utility.ExceptionHandler(
+					"Helper",
+					"RecyclerViewUI",
+					ex);
+			}
+			return new GridLayoutManager(activity, 2);
+		}
+
+		public static float ConvertDpToPixel(float dp, Context context)
+		{
+			float px = 0;
+			try
+			{
+				DisplayMetrics metrics = context.Resources.DisplayMetrics;
+				px = dp * ((float)metrics.DensityDpi / 160f);
+			}
+			catch (Exception ex)
+			{
+				Utility.ExceptionHandler("Helper", "ConvertDpToPixel", ex);
+			}
+			return px;
 		}
 	}
 }

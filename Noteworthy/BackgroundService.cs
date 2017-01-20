@@ -60,7 +60,7 @@ namespace Noteworthy
 			base.OnDestroy();
 		}
 
-		void HandleTimerCallback(object state)
+		async void HandleTimerCallback(object state)
 		{
 			try
 			{
@@ -89,6 +89,14 @@ namespace Noteworthy
 							Log.Debug("HandleTimerCallback", "Pulse is not stress and is recording, so should stop recording and broadcast event");
 							StopRecording();
 							isRecording = false;
+							/*
+							var url = await S3Utils.UploadS3Audios(AudioRecordedPath, "Audio");
+							var AudioRecordedIntent = new Intent(url);
+							{
+								AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, url);
+							}
+							*/
+
 							var AudioRecordedIntent = new Intent(ActionAudioRecorded);
 							{
 								AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, AudioRecordedPath);

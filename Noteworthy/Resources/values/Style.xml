@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+	<style name="DrawerTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+		<item name="windowNoTitle">true</item>
+		<item name="windowActionBar">false</item>
+		<item name="windowActionModeOverlay">true</item>
+		<item name="android:statusBarColor">#000000</item>
+		<item name="android:colorPrimary">#ffffff</item>
+    	<item name="android:colorPrimaryDark">#000000</item>
+		<!--item name="drawerArrowStyle">@style/MyDrawerArrowToggle</item-->
+			<!-- The Color of the Action Bar Style  -->
+		<item name="android:textColorPrimary">#ffffff</item>
+    </style>
+	<!--style name="MyDrawerArrowToggle" parent="Widget.AppCompat.DrawerArrowToggle">
+     	<item name="color">#000000</item>
+     	<item name="gapBetweenBars">4dp</item>
+     	<item name="barSize">18dp</item>
+     	<item name="topBottomBarArrowSize">16dp</item>
+    	<item name="middleBarArrowSize">16dp</item>
+    	<item name="drawableSize">24dp</item>
+	</style-->
+</resources>
