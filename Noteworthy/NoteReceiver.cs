@@ -18,10 +18,19 @@ namespace Noteworthy
 	[IntentFilter(new[] { BackgroundService.ActionAudioRecorded })]
 	public class NoteReceiver : BroadcastReceiver
 	{
-		public override void OnReceive(Context context, Intent intent)
+		public async override void OnReceive(Context context, Intent intent)
 		{
-			var stringUri = intent.GetStringExtra(BackgroundService.ExtraAudioRecordedAbsolutePath);
-			Log.Debug("NoteReceiver", string.Format("Audio Recorded path: {0}", stringUri != null ? stringUri : "<null>"));
+			try
+			{
+				var stringUri = intent.GetStringExtra(BackgroundService.ExtraAudioRecordedAbsolutePath);
+				var url = await S3Utils.UploadS3Audios(stringUri, "Audio");
+				Log.Debug("NoteReceiver", string.Format("Audio stored local at path: {0}", stringUri != null ? stringUri : "<null>"));
+				Log.Debug("NoteReceiver", string.Format("Audio Uploaded to S3 file with url called: {0}", url != null ? url : "<null>"));
+			}
+			catch (Exception ex)
+			{
+				Utility.ExceptionHandler("NoteReceiver", "OnReceive", ex);
+			}
 		}
 	}
 }

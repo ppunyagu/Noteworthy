@@ -30,7 +30,7 @@ namespace Noteworthy
 			}
 			catch (System.Exception ex)
 			{
-				Console.WriteLine("SQlClient Error : " + ex.Message);
+				Utility.ExceptionHandler("DataBase->Constructor", "DataBase()", ex);
 			}
 
 		}
@@ -202,6 +202,7 @@ namespace Noteworthy
 			}
 			catch (Exception ex)
 			{
+				Utility.ExceptionHandler("SQLClient->InsertOrReplace", "InsertOrReplace()", ex);
 				return 0;
 			}
 		}
@@ -250,7 +251,7 @@ namespace Noteworthy
 			}
 			catch (Exception ex)
 			{
-
+				Utility.ExceptionHandler("SQLClient", "GetAll", ex);
 			}
 			return new List<T>();
 		}
@@ -294,7 +295,7 @@ namespace Noteworthy
 			}
 			catch (Exception ex)
 			{
-
+				Utility.ExceptionHandler("SQLClient", "GetById", ex);
 			}
 			return default(T);
 		}

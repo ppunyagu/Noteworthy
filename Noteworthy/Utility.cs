@@ -21,6 +21,8 @@ namespace Noteworthy
 
 		static string db_file;
 
+		public static string audio_file_format = "3gpp";
+
 		public static string Db_file
 		{
 			get
@@ -105,8 +107,7 @@ namespace Noteworthy
 
 		public static void ExceptionHandler(string fileName, string methodName, Exception ex)
 		{
-			
-			Console.Error.WriteLine(string.Format("FileName : {0} and Method Name : {1} \n Error : {2}", fileName, methodName, ex));
+			Log.Error(string.Format("{0}-{1}", fileName, methodName), string.Format("Error: {0}", ex));
 		}
 	}
 }

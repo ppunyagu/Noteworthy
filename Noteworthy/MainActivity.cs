@@ -31,6 +31,7 @@ namespace Noteworthy
 			button.Text = "Record";
 			IsRecording = false;
 
+
 			button.Click += delegate {
 				if (!IsRecording)
 				{
@@ -48,6 +49,7 @@ namespace Noteworthy
 					IsRecording = false;
 					_recorder.Stop();
 					_recorder.Reset();
+					S3Utils.UploadS3Audios(path, "Audio");
 					/*
 					_player.SetDataSource(path);
 					_player.Prepare();

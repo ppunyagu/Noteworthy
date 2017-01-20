@@ -14,7 +14,7 @@ namespace Noteworthy
 	public class BackgroundService : Service
 	{
 		static readonly string TAG = "X:" + typeof(BackgroundService).Name;
-		static readonly int TimerWait = 4000;
+		static readonly int TimerWait = 6000;
 		Timer timer;
 		DateTime startTime;
 		bool isStarted = false;
@@ -62,44 +62,51 @@ namespace Noteworthy
 
 		void HandleTimerCallback(object state)
 		{
-			using (var objGetWebPulseService = new GetWebPulseService())
+			try
 			{
-				bool isStressed = objGetWebPulseService.IsPulseStressed();
-				Log.Debug(TAG, String.Format("isStressed: {0}, isRecording: {1}", isStressed, isRecording));
-				if (isStressed)
+				using (var objGetWebPulseService = new GetWebPulseService())
 				{
-					if (!isRecording)
+					bool isStressed = objGetWebPulseService.IsPulseStressed();
+					Log.Debug(TAG, String.Format("isStressed: {0}, isRecording: {1}", isStressed, isRecording));
+					if (isStressed)
 					{
-						Log.Debug("HandleTimerCallback", "Pulse is stress and is not recording, so should begin recording");
-						StartRecording();
-						isRecording = true;
-					}
-					else {
-						Log.Debug("HandleTimerCallback", "Pulse is stress but is already recording, so should continue recording");
-					}
-				}
-				else {
-					if (!isRecording)
-					{
-						Log.Debug("HandleTimerCallback", "Pulse is not stress and is not recording, so should continue idle");
-					}
-					else {
-						Log.Debug("HandleTimerCallback", "Pulse is not stress and is recording, so should stop recording and broadcast event");
-						StopRecording();
-						isRecording = false;
-						var AudioRecordedIntent = new Intent(ActionAudioRecorded);
+						if (!isRecording)
 						{
-							AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, AudioRecordedPath);
+							Log.Debug("HandleTimerCallback", "Pulse is stress and is not recording, so should begin recording");
+							StartRecording();
+							isRecording = true;
 						}
-						SendBroadcast(AudioRecordedIntent);
+						else {
+							Log.Debug("HandleTimerCallback", "Pulse is stress but is already recording, so should continue recording");
+						}
+					}
+					else {
+						if (!isRecording)
+						{
+							Log.Debug("HandleTimerCallback", "Pulse is not stress and is not recording, so should continue idle");
+						}
+						else {
+							Log.Debug("HandleTimerCallback", "Pulse is not stress and is recording, so should stop recording and broadcast event");
+							StopRecording();
+							isRecording = false;
+							var AudioRecordedIntent = new Intent(ActionAudioRecorded);
+							{
+								AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, AudioRecordedPath);
+							}
+							SendBroadcast(AudioRecordedIntent);
+						}
 					}
 				}
+			}
+			catch (Exception ex)
+			{
+				Utility.ExceptionHandler("BackgroundService", "HandleTimerCallback", ex);
 			}
 		}
 
 		void StartRecording()
 		{
-			string path = "/sdcard/" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".3gpp";
+			string path = "/sdcard/" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + "." + Utility.audio_file_format;
 			AudioRecordedPath = path;
 			Log.Debug(TAG, string.Format("Start recording audio file to path: {0}", path));
 			mediaRecorder.SetAudioSource(AudioSource.Mic);
