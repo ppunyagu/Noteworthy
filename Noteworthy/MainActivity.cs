@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Widget;
 using Android.OS;
+using Android.Content;
 using Android.Media;
 using System;
 
@@ -58,6 +59,9 @@ namespace Noteworthy
 					}
 				};
 
+				Intent intent = new Intent(this, typeof(MainMemoryActivity));
+				intent.SetFlags(ActivityFlags.NewTask);
+				StartActivity(intent);
 
 			}
 			catch (Exception ex)

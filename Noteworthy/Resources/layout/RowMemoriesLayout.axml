@@ -8,4 +8,31 @@
         android:layout_width="180dp"
         android:layout_height="180dp"
         android:scaleType="centerCrop" />
+    <TextView
+        android:letterSpacing="@dimen/my_float_value"
+        android:id="@+id/txtMemContent"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/txtMemSeconds"
+        android:textColor="#1c1c1c"
+        android:textSize="14sp"
+        android:paddingLeft="3dp"
+        android:textAllCaps="false"
+        android:background="#ffffff" />
+    <TextView
+        android:letterSpacing="@dimen/my_float_value"
+        android:id="@id/txtMemSeconds"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_alignParentBottom="true"
+        android:textColor="#ffffff"
+        android:textSize="15sp"
+        android:background="#000000"
+        android:textAllCaps="false" />
 </RelativeLayout>

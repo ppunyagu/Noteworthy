@@ -74,13 +74,19 @@
       <HintPath>..\packages\AWSSDK.S3.3.3.0.4\lib\netstandard1.3\AWSSDK.S3.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Android.Support.v7.AppCompat">
-      <HintPath>..\packages\Xamarin.Android.Support.v7.AppCompat.23.0.1.1\lib\MonoAndroid403\Xamarin.Android.Support.v7.AppCompat.dll</HintPath>
+      <HintPath>..\Libs\Android\Xamarin.Android.Support.v7.AppCompat.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Android.Support.v7.RecyclerView">
-      <HintPath>..\packages\Xamarin.Android.Support.v7.RecyclerView.23.0.1.1\lib\MonoAndroid403\Xamarin.Android.Support.v7.RecyclerView.dll</HintPath>
+      <HintPath>..\Libs\Android\Xamarin.Android.Support.v7.RecyclerView.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.Android.Support.v7.GridLayout">
-      <HintPath>..\packages\Xamarin.Android.Support.v7.GridLayout.23.0.1.1\lib\MonoAndroid403\Xamarin.Android.Support.v7.GridLayout.dll</HintPath>
+    <Reference Include="XamDroid.ExpandableRecyclerView">
+      <HintPath>..\Libs\Android\XamDroid.ExpandableRecyclerView.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.Design">
+      <HintPath>..\Libs\Android\Xamarin.Android.Support.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Mobile">
+      <HintPath>..\Libs\Android\Xamarin.Mobile.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +108,7 @@
     <Compile Include="MemoryAdapter.cs" />
     <Compile Include="SpanSizeLookup.cs" />
     <Compile Include="MainMemoryActivity.cs" />
+    <Compile Include="BaseActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -118,8 +125,6 @@
     <AndroidResource Include="Resources\mipmap-xxhdpi\Icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\Icon.png" />
     <AndroidResource Include="Resources\layout\MainToolbarLayout.axml" />
-    <AndroidResource Include="Resources\drawable\snapspinoffleft.png" />
-    <AndroidResource Include="Resources\drawable\snapspinoffcenter.png" />
     <AndroidResource Include="Resources\layout\RecyclerListLayout.axml" />
     <AndroidResource Include="Resources\layout\CustomLoadMoreLayout.axml" />
     <AndroidResource Include="Resources\layout\NoMemoriesLayout.axml" />
@@ -129,6 +134,9 @@
     <AndroidResource Include="Resources\layout\RowMemoriesLayout.axml" />
     <AndroidResource Include="Resources\values\Style.xml" />
     <AndroidResource Include="Resources\layout\MemoryMainLayout.axml" />
+    <AndroidResource Include="Resources\values\color.xml" />
+    <AndroidResource Include="Resources\drawable\noteworthycenter.png" />
+    <AndroidResource Include="Resources\drawable\noteworthyleft.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />

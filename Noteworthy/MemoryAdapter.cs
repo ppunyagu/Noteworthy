@@ -45,7 +45,10 @@ namespace Noteworthy
 				{
 					var MemoryItem = _lstMemory[position];
 					var viewHolder = holder as MemoryHolderItem;
-					viewHolder.memImage.SetImageResource(Resource.Drawable.imgSad);
+					viewHolder.memImage.SetBackgroundResource(Resource.Color.player_background);
+					//viewHolder.memImage.SetImageResource(Resource.Drawable.imgSad);
+					viewHolder.txtMemContent.Text = MemoryItem.Audio_path;
+					viewHolder.txtMemSeconds.Text = "4s";
 					viewHolder.memImage.Tag = position;
 					viewHolder.rltMemoryImage.Tag = position;
 
@@ -109,6 +112,8 @@ namespace Noteworthy
 	public class MemoryHolderItem : RecyclerView.ViewHolder
 	{
 		public ImageView memImage { get; set; }
+		public TextView txtMemContent { get; set; }
+		public TextView txtMemSeconds { get; set; }
 		Activity _context;
 		MemoryAdapter _adapter;
 		public RelativeLayout rltMemoryImage;
@@ -118,10 +123,11 @@ namespace Noteworthy
 			try
 			{
 				_context = context;
-				//_ProductItems = ProductItems;
 				_adapter = adapter;
 				memImage = view.FindViewById<ImageView>(Resource.Id.imgScreenShot);
 				rltMemoryImage = view.FindViewById<RelativeLayout>(Resource.Id.rltScreenShotImage);
+				txtMemContent = view.FindViewById<TextView>(Resource.Id.txtMemContent);
+				txtMemSeconds = view.FindViewById<TextView>(Resource.Id.txtMemSeconds);
 				memImage.Click += memImage_Click;
 			}
 			catch (Exception ex)

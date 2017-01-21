@@ -8,7 +8,6 @@ using System.Linq;
 using Android.Views;
 using Android.Content.PM;
 using Android.Support.V7.Widget;
-using Android.Support.V7.App;
 using Android.Support.V4.Widget;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Android.Graphics;
@@ -19,7 +18,7 @@ using System.Threading.Tasks;
 namespace Noteworthy
 {
 	[Activity(Label = "Noteworthy", MainLauncher = true, Icon = "@mipmap/icon", ScreenOrientation = ScreenOrientation.SensorPortrait)]
-	public class MainMemoryActivity : ActionBarActivity
+	public class MainMemoryActivity : BaseActivity
 	{
 		Toolbar toolBarHeader;
 		RecyclerView recyclerListView;
@@ -35,11 +34,6 @@ namespace Noteworthy
 			{
 				base.OnCreate(savedInstanceState);
 				SetContentView(Resource.Layout.MemoryMainLayout);
-
-				NoteworthyApplication.StartBackgroundService();
-
-				//DataBase Initalize
-				Utility.InitializeDatabase();
 
 				toolBarHeader = FindViewById<Toolbar>(Resource.Id.tool_bar_snapspinoff_header);
 				SetupActionBar();
@@ -107,7 +101,7 @@ namespace Noteworthy
 					if (_memoryAdapter == null)
 					{
 						_memoryAdapter = new MemoryAdapter(this, _lstMemories);
-						gridmanager.SetSpanSizeLookup(new SpanSizeLookup(_memoryAdapter, gridmanager));
+						//gridmanager.SetSpanSizeLookup(new SpanSizeLookup(_memoryAdapter, gridmanager));
 						recyclerListView.SetAdapter(_memoryAdapter);
 					}
 					else {
