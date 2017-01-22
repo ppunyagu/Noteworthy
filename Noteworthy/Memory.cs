@@ -13,5 +13,8 @@ namespace Noteworthy
 
 		[JsonIgnore]
 		public string Audio_path { get; set; }
+
+		[JsonIgnore]
+		public DateTime? Time { get; set; }
 	}
 }

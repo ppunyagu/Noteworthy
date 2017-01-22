@@ -27,7 +27,9 @@ namespace Noteworthy
 		LinearLayout lnrLoad;
 		List<Memory> _lstMemories;
 		MemoryAdapter _memoryAdapter;
-		GridLayoutManager gridmanager;
+		LinearLayoutManager lnrmanager;
+		int Header = 0, Child = 1;
+
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
 			try
@@ -43,8 +45,7 @@ namespace Noteworthy
 
 				lnrEmptyView = FindViewById<LinearLayout>(Resource.Id.lnrEmptyView);
 				lnrLoad = FindViewById<LinearLayout>(Resource.Id.lnrLoad);
-				recyclerListView.HasFixedSize = true;
-				gridmanager = Utility.RecyclerViewUI(recyclerListView, this);
+				lnrmanager = Utility.RecyclerListViewUI(recyclerListView, this);
 
 				lnrEmptyView = FindViewById<LinearLayout>(Resource.Id.lnrEmptyView);
 				lnrEmptyView.Visibility = ViewStates.Gone;
@@ -98,22 +99,36 @@ namespace Noteworthy
 			{
 				if (_lstMemories != null && _lstMemories.Count > 0)
 				{
-					if (_memoryAdapter == null)
+					List<Item> data = new List<Item>();
+					var dicMemories = _lstMemories.GroupBy(x => x.Time.GetValueOrDefault().Day).ToDictionary(t => t.Key, t => t.ToList());
+					for (int i = 0; i < dicMemories.Count; i++)
 					{
-						_memoryAdapter = new MemoryAdapter(this, _lstMemories);
-						//gridmanager.SetSpanSizeLookup(new SpanSizeLookup(_memoryAdapter, gridmanager));
-						recyclerListView.SetAdapter(_memoryAdapter);
+						Item item = new Item
+						{
+							type = Header,
+							text = dicMemories.ElementAt(i).Key.ToString(), //item.Key.ToString()
+							invisibleChildren = new List<Item>()
+						};
+						data.Add(item);
+
+						List<Memory> childLst = dicMemories.ElementAt(i).Value;
+						if (childLst != null && childLst.Count > 0)
+						{
+							for (int j = 0; j < childLst.Count; j++)
+							{
+								Item objItem = new Item();
+								objItem.type = Child;
+								objItem.memory = childLst[j];
+								data.Add(objItem);
+							}
+						}
 					}
-					else {
-						_memoryAdapter.updateItems(_lstMemories);
-					}
+					_memoryAdapter = new MemoryAdapter(this, data);
+
+					recyclerListView.SetAdapter(_memoryAdapter);
 					recyclerListView.Visibility = ViewStates.Visible;
 					lnrEmptyView.Visibility = ViewStates.Gone;
 					lnrLoad.Visibility = ViewStates.Gone;
-				}
-				else {
-					recyclerListView.Visibility = ViewStates.Gone;
-					lnrEmptyView.Visibility = ViewStates.Visible;
 				}
 			}
 			catch (Exception ex)
@@ -140,7 +155,6 @@ namespace Noteworthy
 			try
 			{
 				base.OnPause();
-				//lnrEmptyView.Click -= LnrEmptyView_Click;
 			}
 			catch (Exception ex)
 			{

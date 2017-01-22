@@ -1,38 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rltScreenShotImage"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/whitepress_selector"
     android:layout_width="match_parent"
-    android:layout_height="180dp">
-    <ImageView
-        android:id="@+id/imgScreenShot"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-        android:scaleType="centerCrop" />
-    <TextView
-        android:letterSpacing="@dimen/my_float_value"
-        android:id="@+id/txtMemContent"
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceMedium"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/lnrRow"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/txtMemSeconds"
-        android:textColor="#1c1c1c"
-        android:textSize="14sp"
-        android:paddingLeft="3dp"
-        android:textAllCaps="false"
-        android:background="#ffffff" />
-    <TextView
-        android:letterSpacing="@dimen/my_float_value"
-        android:id="@id/txtMemSeconds"
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:layout_alignParentBottom="true"
-        android:textColor="#ffffff"
-        android:textSize="15sp"
-        android:background="#000000"
-        android:textAllCaps="false" />
-</RelativeLayout>
+        android:layout_height="49dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="@drawable/whitepress_selector">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_weight="0.8"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
+            <ImageView
+                android:src="@drawable/circle"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/imgOrderPendingProfilePic" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="10dp">
+                <TextView
+                    android:letterSpacing="@dimen/my_float_value"
+                    android:text="Hello"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="13.5sp"
+                    android:textColor="#000000"
+                    android:textAllCaps="false"
+                    android:id="@+id/txtOrderPendingProfileName" />
+                <LinearLayout
+                    android:id="@+id/lnrOrderPending"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content">
+                    <TextView
+                        android:letterSpacing="@dimen/my_float_value"
+                        android:text="world"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="13.5sp"
+                        android:textColor="#000000"
+                        android:textAllCaps="false"
+                        android:id="@+id/txtOrderPendingstatus" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="0.2"
+            android:gravity="center_vertical|right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/linearLayout2">
+            <TextView
+                android:letterSpacing="@dimen/my_float_value"
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textAllCaps="false"
+                android:textColor="#000000"
+                android:id="@+id/txtOrderPendingtime" />
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:visibility="visible"
+        android:background="#dddddd" />
+</LinearLayout>

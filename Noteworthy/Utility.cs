@@ -123,7 +123,7 @@ namespace Noteworthy
 			catch (Exception ex)
 			{
 				Utility.ExceptionHandler(
-					"Helper",
+					"Utility",
 					"RecyclerViewUI",
 					ex);
 			}
@@ -140,9 +140,28 @@ namespace Noteworthy
 			}
 			catch (Exception ex)
 			{
-				Utility.ExceptionHandler("Helper", "ConvertDpToPixel", ex);
+				Utility.ExceptionHandler("Utility", "ConvertDpToPixel", ex);
 			}
 			return px;
+		}
+
+		public static LinearLayoutManager RecyclerListViewUI(RecyclerView recyclerView, Activity activity)
+		{
+			LinearLayoutManager listmanager = null;
+			try
+			{
+				listmanager = new LinearLayoutManager(activity);
+				recyclerView.AddItemDecoration(new GridSpacingItemDecoration(1, 0, false, true));
+				recyclerView.SetLayoutManager(listmanager);
+			}
+			catch (Exception ex)
+			{
+				Utility.ExceptionHandler(
+					"Utility",
+					"RecyclerListViewUI",
+					ex);
+			}
+			return listmanager;
 		}
 	}
 }

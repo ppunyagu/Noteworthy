@@ -1,161 +1,197 @@
 ﻿using System;
-using Android.Widget;
+using Android.Support.V7.Widget;
 using System.Collections.Generic;
 using Android.Views;
+using Android.Widget;
 using Android.App;
-using Android.Support.V7.Widget;
-using Android.Content;
 
 namespace Noteworthy
 {
 	public class MemoryAdapter : RecyclerView.Adapter
 	{
-		public List<Memory> _lstMemory;
+		//1 for child and 0 for header , viewtype
+		public List<Item> data;
 		Activity _context;
-		int viewTypeItem = 1;
-		int viewTypeFooter = 2;
-		private LayoutInflater _inflater;
-
-		public MemoryAdapter(Activity context, List<Memory> lstMemory)
+		public MemoryAdapter(Activity context, List<Item> data)
 		{
-			_lstMemory = lstMemory;
+			this.data = data;
 			_context = context;
-			_inflater = context.LayoutInflater;
 		}
 
-		public void updateItems(List<Memory> lstMemory)
-		{
-			try
-			{
-				_lstMemory = lstMemory;
-				NotifyDataSetChanged();
-			}
-			catch (Exception ex)
-			{
-				Utility.ExceptionHandler(Class.SimpleName + "Act: " + _context.Class.SimpleName, "updateItems", ex);
-			}
-		}
+		#region implemented abstract members of Adapter
 
 		public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
 		{
 			try
 			{
+				Item item = data[position];
+				var res = Application.Context.Resources;
 
-				if (holder is MemoryHolderItem)
+				switch (item.type)
 				{
-					var MemoryItem = _lstMemory[position];
-					var viewHolder = holder as MemoryHolderItem;
-					viewHolder.memImage.SetBackgroundResource(Resource.Color.player_background);
-					//viewHolder.memImage.SetImageResource(Resource.Drawable.imgSad);
-					viewHolder.txtMemContent.Text = MemoryItem.Audio_path;
-					viewHolder.txtMemSeconds.Text = "4s";
-					viewHolder.memImage.Tag = position;
-					viewHolder.rltMemoryImage.Tag = position;
-
-					int paddingNormal = (int)Utility.ConvertDpToPixel(5, _context);
-					if (position % 2 == 0)
-					{
-						viewHolder.rltMemoryImage.SetPadding(paddingNormal + (paddingNormal / 2), paddingNormal, 0, paddingNormal / 2);
-					}
-					else {
-						viewHolder.rltMemoryImage.SetPadding(paddingNormal / 2, paddingNormal, paddingNormal + (paddingNormal / 2), paddingNormal / 2);
-					}
+					case 0:
+						MemoryDateViewHolder itemController = (MemoryDateViewHolder)holder;
+						itemController.refferalItem = item;
+						itemController.header_title.Text = (item.text);
+						itemController.header_title.SetTextColor(res.GetColor(Resource.Color.player_background));
+						itemController.header_title.Text = "Today";
+						Console.WriteLine(itemController.youp.Width);
+						//itemController.btn_expand_toggle.Visibility = ViewStates.Gone;
+						itemController.header_title.Clickable = false;
+						/* #todo Segment for date
+						if (string.Equals(item.text, OrderStatus.WaitingForPaymentApproval.ToString()))
+						{
+							itemController.header_title.SetTextColor(res.GetColor(Resource.Color.orderlist_firstheader_color));
+							itemController.header_title.Text = res.GetString(Resource.String.orderPaymentApproval);
+							itemController.btn_expand_toggle.Visibility = ViewStates.Gone;
+							itemController.header_title.Clickable = false;
+						}
+						else if (string.Equals(item.text, OrderStatus.WaitingForPayment.ToString()))
+						{
+							itemController.header_title.SetTextColor(res.GetColor(Resource.Color.orderlist_secondheader_color));
+							itemController.header_title.Text = res.GetString(Resource.String.orderPaymentPending);
+						}
+						else {
+							itemController.header_title.SetTextColor(res.GetColor(Resource.Color.black));
+							itemController.header_title.Text = res.GetString(Resource.String.paymentDecline);
+						}
+						*/
+						break;
+					case 1:
+						ChildStickyListViewHolder objChildHolder = (ChildStickyListViewHolder)holder;
+						objChildHolder._item = item;
+						var childOrderItem = (data[position]).memory;
+						//string orderStatus = childOrderItem.Audio_path.ToString();
+						objChildHolder.txtPendigTime.Text = "<Content will go here>";
+						objChildHolder.txtPendingOrderStutas.Text = "<Something will go here>";
+						//objChildHolder.txtPendingUsername.Text = "<What's this?>";
+						/* #todo Circle image with Text for seconds
+						if (childOrderItem.user != null && !string.IsNullOrEmpty(childOrderItem.user.resolved.ProfilePhoto))
+							Helper.SetRemoteImage(objChildHolder.imgPendingProfilePic, childOrderItem.user.resolved.ProfilePhoto, Resource.Color.reviewBackground);
+						*/
+						/*
+						if (childOrderItem.shop.resolved != null && !string.IsNullOrEmpty(childOrderItem.shop.resolved.UserName))
+							objChildHolder.txtPendingUsername.Text = childOrderItem.user.resolved.UserName.ToLower();
+						*/
+						break;
+					default:
+						break;
 				}
 			}
 			catch (Exception ex)
 			{
-				Utility.ExceptionHandler(Class.SimpleName + "Act: " + _context.Class.SimpleName, "OnBindViewHolder", ex);
+				Utility.ExceptionHandler(Class.SimpleName, "OnBindViewHolder", ex);
 			}
 		}
 
 		public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
 		{
-			View view = null;
-			RecyclerView.ViewHolder vh = null;
 			try
 			{
-				view = _inflater.Inflate(Resource.Layout.RowMemoriesLayout, parent, false);
-				vh = new MemoryHolderItem(_context, this, view);
+				View view = null;
+				switch (viewType)
+				{
+					case 0:
+						view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.RowSimpleTextLayout, parent, false);
+						MemoryDateViewHolder header = new MemoryDateViewHolder(view, this);
+						return header;
+					case 1:
+						view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.RowMemoriesLayout, parent, false);
+						ChildStickyListViewHolder childHolder = new ChildStickyListViewHolder(_context, this, view);
+
+						return childHolder;
+				}
 			}
 			catch (Exception ex)
 			{
-				Utility.ExceptionHandler(Class.SimpleName + "Act: " + _context.Class.SimpleName, "OnCreateViewHolder", ex);
+				Utility.ExceptionHandler(Class.SimpleName, "OnCreateViewHolder", ex);
 			}
-			return vh;
+			return null;
 		}
 
 		public override int ItemCount
 		{
 			get
 			{
-				if (_lstMemory != null)
-				{
-					return _lstMemory.Count;
-				}
-				else {
-					return 0;
-				}
+				return data.Count;
 			}
 		}
 
 		public override int GetItemViewType(int position)
 		{
-			return isfooter(position) ? viewTypeFooter : viewTypeItem;
+			return data[position].type;
 		}
 
-		public bool isfooter(int position)
+		#endregion
+
+		public class MemoryDateViewHolder : RecyclerView.ViewHolder
 		{
-			return position == _lstMemory.Count;
+			public TextView header_title { get; set; }
+			public ImageView btn_expand_toggle { get; set; }
+			public RelativeLayout rltExpaned { get; set; }
+			public LinearLayout youp { get; set; }
+			public Item refferalItem;
+
+			public MemoryDateViewHolder(View itemView, MemoryAdapter adapter) : base(itemView)
+			{
+				header_title = (TextView)itemView.FindViewById(Resource.Id.txtStickyHeader);
+				btn_expand_toggle = (ImageView)itemView.FindViewById(Resource.Id.imgExpaneArrow);
+				rltExpaned = (RelativeLayout)itemView.FindViewById(Resource.Id.rltExpaned);
+				youp = (LinearLayout)itemView.FindViewById(Resource.Id.youp);
+				rltExpaned.Click += (sender, e) =>
+				{
+					try
+					{
+						return;
+						/* #todo Segment by date
+						if (refferalItem.text == OrderStatus.WaitingForPaymentApproval.ToString())
+						{
+							return;
+						}
+						var data = adapter.data;
+						int pos = data.IndexOf(refferalItem);
+						if (refferalItem.invisibleChildren == null)
+						{
+							refferalItem.invisibleChildren = new List<Item>();
+							int count = 0;
+							while (data.Count > pos + 1 && data[pos + 1].type == 1)
+							{
+								var invisibleItem = new Item();
+								invisibleItem = data[pos + 1];
+								data.RemoveAt(pos + 1);
+								refferalItem.invisibleChildren.Add(invisibleItem);
+								count++;
+							}
+							adapter.NotifyItemRangeRemoved(pos + 1, count);
+						}
+						else {
+							int index = pos + 1;
+							foreach (var i in refferalItem.invisibleChildren)
+							{
+								data.Insert(index, i);
+								index++;
+							}
+							adapter.NotifyItemRangeInserted(pos + 1, index - pos - 1);
+							refferalItem.invisibleChildren = null;
+
+						}
+						*/
+					}
+					catch (Exception ex)
+					{
+						Utility.ExceptionHandler(Class.SimpleName, "rltExpaned _Click", ex);
+					}
+				};
+			}
 		}
 	}
 
-	public class MemoryHolderItem : RecyclerView.ViewHolder
+	public class Item
 	{
-		public ImageView memImage { get; set; }
-		public TextView txtMemContent { get; set; }
-		public TextView txtMemSeconds { get; set; }
-		Activity _context;
-		MemoryAdapter _adapter;
-		public RelativeLayout rltMemoryImage;
-
-		public MemoryHolderItem(Activity context, MemoryAdapter adapter, View view) : base(view)
-		{
-			try
-			{
-				_context = context;
-				_adapter = adapter;
-				memImage = view.FindViewById<ImageView>(Resource.Id.imgScreenShot);
-				rltMemoryImage = view.FindViewById<RelativeLayout>(Resource.Id.rltScreenShotImage);
-				txtMemContent = view.FindViewById<TextView>(Resource.Id.txtMemContent);
-				txtMemSeconds = view.FindViewById<TextView>(Resource.Id.txtMemSeconds);
-				memImage.Click += memImage_Click;
-			}
-			catch (Exception ex)
-			{
-				Utility.ExceptionHandler(Class.SimpleName + "Act: " + _context.Class.SimpleName, "SimiliarProductViewHolderItem", ex);
-			}
-		}
-
-		void memImage_Click(object sender, EventArgs e)
-		{
-			try
-			{
-
-				ImageView img = (ImageView)sender;
-				var SelctedProduct = _adapter._lstMemory[(int)img.Tag];
-				/*
-				Intent intent = new Intent(_context, typeof(ViewSimiliarProductActivity));
-				intent.PutExtra("ViewSimiliarProduct", SelctedProduct.Screenshot_url);
-				intent.PutExtra("isLoaded", "true");
-				_context.StartActivityForResult(intent, 10);
-				Helper.EnterAnim(_context);
-				*/
-			}
-			catch (Exception ex)
-			{
-				Utility.ExceptionHandler(Class.SimpleName + "Act: " + _context.Class.SimpleName, "memImage_Click", ex);
-			}
-		}
+		public int type;
+		public String text;
+		public List<Item> invisibleChildren;
+		public Memory memory;
 	}
 }
 

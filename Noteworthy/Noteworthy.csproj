@@ -109,6 +109,8 @@
     <Compile Include="SpanSizeLookup.cs" />
     <Compile Include="MainMemoryActivity.cs" />
     <Compile Include="BaseActivity.cs" />
+    <Compile Include="ChildStickyListViewHolder.cs" />
+    <Compile Include="FontFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -137,10 +139,18 @@
     <AndroidResource Include="Resources\values\color.xml" />
     <AndroidResource Include="Resources\drawable\noteworthycenter.png" />
     <AndroidResource Include="Resources\drawable\noteworthyleft.png" />
+    <AndroidResource Include="Resources\drawable\circle.png" />
+    <AndroidResource Include="Resources\layout\RowSimpleTextLayout.axml" />
+    <AndroidResource Include="Resources\drawable\down.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
     <Folder Include="Web\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\OpenSans-Bold.ttf" />
+    <AndroidAsset Include="Assets\OpenSans-Regular.ttf" />
+    <AndroidAsset Include="Assets\OpenSans-Semibold.ttf" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

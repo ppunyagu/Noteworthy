@@ -28,7 +28,9 @@ namespace Noteworthy
 				Log.Debug("NoteReceiver", string.Format("Audio stored local at path: {0}", stringUri != null ? stringUri : "<null>"));
 				Memory _mem = new Memory();
 				_mem.Audio_path = stringUri;
+				_mem.Time = DateTime.Now;
 				SQLClient<Memory>.Instance.Insert(_mem);
+				NoteworthyApplication.NotifyMemorized(stringUri);
 				//Log.Debug("NoteReceiver", string.Format("Audio Uploaded to S3 file with url called: {0}", url != null ? url : "<null>"));
 			}
 			catch (Exception ex)
