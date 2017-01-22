@@ -32,11 +32,21 @@ namespace Noteworthy
 					case 0:
 						MemoryDateViewHolder itemController = (MemoryDateViewHolder)holder;
 						itemController.refferalItem = item;
-						itemController.header_title.Text = (item.text);
+						//itemController.header_title.Text = (item.text);
+						if (Convert.ToInt32(item.text) == DateTime.Now.DayOfYear)
+						{
+							itemController.header_title.Text = "Today";
+						}
+						else if (Convert.ToInt32(item.text) == (DateTime.Now.DayOfYear - 1))
+						{
+							itemController.header_title.Text = "Yesterday";
+						}
+						else {
+							DateTime theDate = new DateTime(DateTime.Now.Year, 1, 1).AddDays(Convert.ToInt32(item.text) - 1);
+							itemController.header_title.Text = theDate.ToString("dd-M");;
+						}
 						itemController.header_title.SetTypeface(Android.Graphics.Typeface.DefaultBold, Android.Graphics.TypefaceStyle.Bold);
 						itemController.header_title.SetTextColor(res.GetColor(Resource.Color.black));
-						itemController.header_title.Text = item.text;
-						Console.WriteLine(itemController.youp.Width);
 						itemController.header_title.Clickable = false;
 						break;
 					case 1:
@@ -45,7 +55,7 @@ namespace Noteworthy
 						var childOrderItem = (data[position]).memory;
 						//string orderStatus = childOrderItem.Audio_path.ToString();
 						objChildHolder.txtPendingUsername.Text = childOrderItem.Audio_path;
-						objChildHolder.txtPendigTime.Text = childOrderItem.Time.GetValueOrDefault().Hour.ToString();
+						objChildHolder.txtPendigTime.Text = Utility.GetRelativeTime(childOrderItem.Time.GetValueOrDefault());
 						objChildHolder.txtPendingOrderStutas.Text = "<Speech to Text will go here>";
 						//objChildHolder.txtPendingUsername.Text = "<What's this?>";
 						/* #todo Circle image with Text for seconds

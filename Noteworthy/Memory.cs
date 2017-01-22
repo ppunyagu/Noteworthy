@@ -16,5 +16,8 @@ namespace Noteworthy
 
 		[JsonIgnore]
 		public DateTime? Time { get; set; }
+
+		[JsonIgnore]
+		public int Duration { get; set; }
 	}
 }

@@ -18,7 +18,7 @@ namespace Noteworthy
 {
 	public static class Utility
 	{
-		public static int DBVersion = 1;
+		public static int DBVersion = 2;
 
 		static string db_file;
 
@@ -162,6 +162,44 @@ namespace Noteworthy
 					ex);
 			}
 			return listmanager;
+		}
+
+		private static string[] EngMonth = new string[] {
+			"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+		};
+
+		public static string GetRelativeTime(DateTime dt) {
+			var ts = new TimeSpan(DateTime.Now.Ticks - dt.Ticks);
+			double delta = Math.Abs(ts.TotalSeconds);
+
+			if (delta < 60)
+			{
+				return "just now";
+			}
+			if (delta < 120)
+			{
+				return "a min ago";
+			}
+			if (delta < 3600)
+			{
+				return ts.Minutes + " mins ago";
+			}
+			if (delta < 86400)
+			{
+				if (ts.Hours <= 1)
+				{
+					return "an hr ago";
+				}
+				else {
+					return ts.Hours + " hrs ago";
+				}
+			}
+			if (delta < 172800)
+			{
+				return "yesterday";
+			}
+
+			return EngMonth[dt.Month - 1] + " " + dt.ToString("dd");
 		}
 	}
 }

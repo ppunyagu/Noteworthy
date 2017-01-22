@@ -100,7 +100,7 @@ namespace Noteworthy
 				if (_lstMemories != null && _lstMemories.Count > 0)
 				{
 					List<Item> data = new List<Item>();
-					var dicMemories = _lstMemories.GroupBy(x => x.Time.GetValueOrDefault().Day).ToDictionary(t => t.Key, t => t.ToList());
+					var dicMemories = _lstMemories.GroupBy(x => x.Time.GetValueOrDefault().DayOfYear).ToDictionary(t => t.Key, t => t.ToList());
 					for (int i = 0; i < dicMemories.Count; i++)
 					{
 						Item item = new Item

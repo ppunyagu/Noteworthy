@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Android.Media;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -29,6 +29,13 @@ namespace Noteworthy
 				Memory _mem = new Memory();
 				_mem.Audio_path = stringUri;
 				_mem.Time = DateTime.Now;
+
+				MediaPlayer mp = new MediaPlayer();
+				mp.SetDataSource(stringUri);
+				_mem.Duration = mp.Duration;
+				mp.Release();
+				mp.Dispose();
+
 				SQLClient<Memory>.Instance.Insert(_mem);
 				NoteworthyApplication.NotifyMemorized(stringUri);
 				//Log.Debug("NoteReceiver", string.Format("Audio Uploaded to S3 file with url called: {0}", url != null ? url : "<null>"));
