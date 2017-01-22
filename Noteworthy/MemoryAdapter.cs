@@ -33,37 +33,20 @@ namespace Noteworthy
 						MemoryDateViewHolder itemController = (MemoryDateViewHolder)holder;
 						itemController.refferalItem = item;
 						itemController.header_title.Text = (item.text);
-						itemController.header_title.SetTextColor(res.GetColor(Resource.Color.player_background));
-						itemController.header_title.Text = "Today";
+						itemController.header_title.SetTypeface(Android.Graphics.Typeface.DefaultBold, Android.Graphics.TypefaceStyle.Bold);
+						itemController.header_title.SetTextColor(res.GetColor(Resource.Color.black));
+						itemController.header_title.Text = item.text;
 						Console.WriteLine(itemController.youp.Width);
-						//itemController.btn_expand_toggle.Visibility = ViewStates.Gone;
 						itemController.header_title.Clickable = false;
-						/* #todo Segment for date
-						if (string.Equals(item.text, OrderStatus.WaitingForPaymentApproval.ToString()))
-						{
-							itemController.header_title.SetTextColor(res.GetColor(Resource.Color.orderlist_firstheader_color));
-							itemController.header_title.Text = res.GetString(Resource.String.orderPaymentApproval);
-							itemController.btn_expand_toggle.Visibility = ViewStates.Gone;
-							itemController.header_title.Clickable = false;
-						}
-						else if (string.Equals(item.text, OrderStatus.WaitingForPayment.ToString()))
-						{
-							itemController.header_title.SetTextColor(res.GetColor(Resource.Color.orderlist_secondheader_color));
-							itemController.header_title.Text = res.GetString(Resource.String.orderPaymentPending);
-						}
-						else {
-							itemController.header_title.SetTextColor(res.GetColor(Resource.Color.black));
-							itemController.header_title.Text = res.GetString(Resource.String.paymentDecline);
-						}
-						*/
 						break;
 					case 1:
 						ChildStickyListViewHolder objChildHolder = (ChildStickyListViewHolder)holder;
 						objChildHolder._item = item;
 						var childOrderItem = (data[position]).memory;
 						//string orderStatus = childOrderItem.Audio_path.ToString();
-						objChildHolder.txtPendigTime.Text = "<Content will go here>";
-						objChildHolder.txtPendingOrderStutas.Text = "<Something will go here>";
+						objChildHolder.txtPendingUsername.Text = childOrderItem.Audio_path;
+						objChildHolder.txtPendigTime.Text = childOrderItem.Time.GetValueOrDefault().Hour.ToString();
+						objChildHolder.txtPendingOrderStutas.Text = "<Speech to Text will go here>";
 						//objChildHolder.txtPendingUsername.Text = "<What's this?>";
 						/* #todo Circle image with Text for seconds
 						if (childOrderItem.user != null && !string.IsNullOrEmpty(childOrderItem.user.resolved.ProfilePhoto))
@@ -127,7 +110,6 @@ namespace Noteworthy
 		public class MemoryDateViewHolder : RecyclerView.ViewHolder
 		{
 			public TextView header_title { get; set; }
-			public ImageView btn_expand_toggle { get; set; }
 			public RelativeLayout rltExpaned { get; set; }
 			public LinearLayout youp { get; set; }
 			public Item refferalItem;
@@ -135,7 +117,6 @@ namespace Noteworthy
 			public MemoryDateViewHolder(View itemView, MemoryAdapter adapter) : base(itemView)
 			{
 				header_title = (TextView)itemView.FindViewById(Resource.Id.txtStickyHeader);
-				btn_expand_toggle = (ImageView)itemView.FindViewById(Resource.Id.imgExpaneArrow);
 				rltExpaned = (RelativeLayout)itemView.FindViewById(Resource.Id.rltExpaned);
 				youp = (LinearLayout)itemView.FindViewById(Resource.Id.youp);
 				rltExpaned.Click += (sender, e) =>
