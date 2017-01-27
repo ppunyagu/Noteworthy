@@ -118,8 +118,8 @@ namespace Noteworthy
 			AudioRecordedPath = path;
 			Log.Debug(TAG, string.Format("Start recording audio file to path: {0}", path));
 			mediaRecorder.SetAudioSource(AudioSource.Mic);
-			mediaRecorder.SetOutputFormat(OutputFormat.ThreeGpp);
-			mediaRecorder.SetAudioEncoder(AudioEncoder.Default);
+			mediaRecorder.SetOutputFormat(OutputFormat.Mpeg4);
+			mediaRecorder.SetAudioEncoder(AudioEncoder.Aac);
 			mediaRecorder.SetOutputFile(path);
 			mediaRecorder.Prepare();
 			mediaRecorder.Start();
