@@ -1,108 +1,114 @@
-﻿using Android.App;
+﻿//Please note that the application must have RECORD_AUDIO permission to use this class. 
+
+using System;
+using Android.App;
+using Android.Content;
+using Android.Runtime;
 using Android.Widget;
 using Android.OS;
-using Android.Content;
-using Android.Media;
-using System;
+using Android.Speech;
+using Android.Util;
 
 namespace Noteworthy
 {
 	[Activity(Label = "Noteworthy", MainLauncher = true, Icon = "@mipmap/icon")]
-	public class MainActivity : Activity
+	public class MainActivity : Activity, IRecognitionListener
 	{
-		MediaRecorder _recorder;
-		MediaPlayer _player;
-		string path = "/sdcard/test.3gpp";
-		bool IsRecording;
+		public const string Tag = "VoiceRec";
 
-		protected override void OnCreate(Bundle savedInstanceState)
+		SpeechRecognizer Recognizer { get; set; }
+		Intent SpeechIntent { get; set; }
+		TextView Label { get; set; }
+
+		protected override void OnCreate(Bundle bundle)
 		{
-			try
+			base.OnCreate(bundle);
+
+			SetContentView(Resource.Layout.MainRecording);
+
+			// Set this on if want Audio Background: 
+			Utility.server_heartRate = "http://157.252.187.36:5000";
+			//NoteworthyApplication.StartBackgroundService();
+
+			//DataBase Initalize
+			Utility.InitializeDatabase();
+
+			Recognizer = SpeechRecognizer.CreateSpeechRecognizer(this);
+			Recognizer.SetRecognitionListener(this);
+
+			SpeechIntent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+			SpeechIntent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+			SpeechIntent.PutExtra(RecognizerIntent.ExtraCallingPackage, PackageName);
+			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 5000);
+			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 5000);
+			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 20000);
+
+			// Set Up
+			/*
+			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
+			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
+			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
+			SpeechIntent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+			SpeechIntent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+			*/
+
+			var button = FindViewById<Button>(Resource.Id.btnRecord);
+			var buttonStop = FindViewById<Button>(Resource.Id.btnStopRecord);
+			button.Click += ButtonStartRecording;
+			buttonStop.Click += ButtonStopRecording;
+
+			Label = FindViewById<TextView>(Resource.Id.textYourText);
+
+			Intent intent = new Intent(this, typeof(MainMemoryActivity));
+			intent.SetFlags(ActivityFlags.NewTask);
+			StartActivity(intent);
+		}
+
+		private void ButtonStartRecording(object sender, EventArgs e)
+		{
+			Recognizer.StartListening(SpeechIntent);
+		}
+
+		private void ButtonStopRecording(object sender, EventArgs e)
+		{
+			Recognizer.StopListening();
+		}
+
+		public void OnResults(Bundle results)
+		{
+			var matches = results.GetStringArrayList(SpeechRecognizer.ResultsRecognition);
+			if (matches != null && matches.Count > 0)
 			{
-				base.OnCreate(savedInstanceState);
-				SetContentView(Resource.Layout.Main);
-
-				NoteworthyApplication.StartBackgroundService();
-
-				//DataBase Initalize
-				Utility.InitializeDatabase();
-
-				// Get our button from the layout resource,
-				// and attach an event to it
-				Button button = FindViewById<Button>(Resource.Id.myButton);
-				button.Text = "Record";
-				IsRecording = false;
-
-				button.Click += delegate
-				{
-					if (!IsRecording)
-					{
-						button.Text = "Record";
-						IsRecording = true;
-						_recorder.SetAudioSource(AudioSource.Mic);
-						_recorder.SetOutputFormat(OutputFormat.ThreeGpp);
-						_recorder.SetAudioEncoder(AudioEncoder.Default);
-						_recorder.SetOutputFile(path);
-						_recorder.Prepare();
-						_recorder.Start();
-					}
-					else {
-						button.Text = "Stop Recording";
-						IsRecording = false;
-						_recorder.Stop();
-						_recorder.Reset();
-						/*
-						_player.SetDataSource(path);
-						_player.Prepare();
-						_player.Start();
-						*/
-					}
-				};
-
-				Intent intent = new Intent(this, typeof(MainMemoryActivity));
-				intent.SetFlags(ActivityFlags.NewTask);
-				StartActivity(intent);
-
-			}
-			catch (Exception ex)
-			{
-				Utility.ExceptionHandler(Class.SimpleName, "OnCreate", ex);
+				Label.Text = matches[0];
 			}
 		}
 
-		protected override void OnResume()
+		public void OnReadyForSpeech(Bundle @params)
 		{
-			try
-			{
-				base.OnResume();
-
-				_recorder = new MediaRecorder();
-				_player = new MediaPlayer();
-			}
-			catch (Exception ex)
-			{
-				Utility.ExceptionHandler(Class.SimpleName, "OnResume", ex);
-			}
+			Log.Debug(Tag, "OnReadyForSpeech");
 		}
 
-		protected override void OnPause()
+		public void OnBeginningOfSpeech()
 		{
-			try
-			{
-				base.OnPause();
-
-				_player.Release();
-				_recorder.Release();
-				_player.Dispose();
-				_recorder.Dispose();
-				_player = null;
-				_recorder = null;
-			}
-			catch (Exception ex)
-			{
-				Utility.ExceptionHandler(Class.SimpleName, "OnPause", ex);
-			}
+			Log.Debug(Tag, "OnBeginningOfSpeech");
 		}
+
+		public void OnEndOfSpeech()
+		{
+			Log.Debug(Tag, "OnEndOfSpeech");
+		}
+
+		public void OnError([GeneratedEnum] SpeechRecognizerError error)
+		{
+			Log.Debug("OnError", error.ToString());
+		}
+
+		public void OnBufferReceived(byte[] buffer) { }
+
+		public void OnEvent(int eventType, Bundle @params) { }
+
+		public void OnPartialResults(Bundle partialResults) { }
+
+		public void OnRmsChanged(float rmsdB) { }
 	}
 }
-

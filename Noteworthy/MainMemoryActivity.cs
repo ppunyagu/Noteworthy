@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Noteworthy
 {
-	[Activity(Label = "Noteworthy", MainLauncher = true, Icon = "@mipmap/icon", ScreenOrientation = ScreenOrientation.SensorPortrait)]
+	[Activity(Label = "Noteworthy", /* MainLauncher = true, */Icon = "@mipmap/icon", ScreenOrientation = ScreenOrientation.SensorPortrait)]
 	public class MainMemoryActivity : BaseActivity
 	{
 		Toolbar toolBarHeader;
@@ -58,7 +58,7 @@ namespace Noteworthy
 				string MemorySelected = Intent.GetStringExtra("MemorySelected");
 				if (!string.IsNullOrEmpty(MemorySelected))
 				{
-					/*
+					/* #todo Handle PN case
 					Intent intent = new Intent(this, typeof(ProductDetailActivity));
 					intent.PutExtra("SelctedProduct", productJson);
 					intent.SetFlags(ActivityFlags.NewTask);

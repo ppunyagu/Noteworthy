@@ -142,6 +142,7 @@
     <AndroidResource Include="Resources\drawable\circle.png" />
     <AndroidResource Include="Resources\layout\RowSimpleTextLayout.axml" />
     <AndroidResource Include="Resources\drawable\down.png" />
+    <AndroidResource Include="Resources\layout\MainRecording.axml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />

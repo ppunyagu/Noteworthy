@@ -22,6 +22,8 @@ namespace Noteworthy
 
 		static string db_file;
 
+		public static string server_heartRate { get; set; }
+
 		public static string audio_file_format = "mp3";
 
 		public static string Db_file

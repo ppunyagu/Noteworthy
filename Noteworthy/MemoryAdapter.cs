@@ -56,7 +56,8 @@ namespace Noteworthy
 						//string orderStatus = childOrderItem.Audio_path.ToString();
 						objChildHolder.txtPendingUsername.Text = childOrderItem.Audio_path;
 						objChildHolder.txtPendigTime.Text = Utility.GetRelativeTime(childOrderItem.Time.GetValueOrDefault());
-						objChildHolder.txtPendingOrderStutas.Text = "<Speech to Text will go here>";
+						//objChildHolder.txtPendingOrderStutas.Text = "<Speech to Text will go here>";
+						objChildHolder.txtPendingOrderStutas.Text = string.Format("Seconds: {0}", childOrderItem.Duration.ToString());
 						//objChildHolder.txtPendingUsername.Text = "<What's this?>";
 						/* #todo Circle image with Text for seconds
 						if (childOrderItem.user != null && !string.IsNullOrEmpty(childOrderItem.user.resolved.ProfilePhoto))

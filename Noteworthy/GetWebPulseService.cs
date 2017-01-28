@@ -9,7 +9,7 @@ namespace Noteworthy
 	{
 		public bool IsPulseStressed()
 		{
-			WebRequest request = WebRequest.Create("http://192.168.1.41:5000");
+			WebRequest request = WebRequest.Create(Utility.server_heartRate);
 			request.Method = "GET";
 
 			WebResponse response = request.GetResponse();
@@ -26,6 +26,12 @@ namespace Noteworthy
 				return false;
 			}
 		}
+
+		public void getSpeechToText(string fileUrl)
+		{
+			
+		}
+
 		public void Dispose()
 		{
 			// Clear all property values that maybe have been set
