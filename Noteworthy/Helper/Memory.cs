@@ -19,5 +19,8 @@ namespace Noteworthy
 
 		[JsonIgnore]
 		public int Duration { get; set; }
+
+		[JsonIgnore]
+		public string ConversationText { get; set; }
 	}
 }

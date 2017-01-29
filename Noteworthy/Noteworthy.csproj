@@ -90,33 +90,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="BackgroundService.cs" />
-    <Compile Include="NoteReceiver.cs" />
-    <Compile Include="NoteworthyApplication.cs" />
-    <Compile Include="NoteWakefulReceiver.cs" />
-    <Compile Include="GetWebPulseService.cs" />
-    <Compile Include="SQLiteAsync.cs" />
-    <Compile Include="SQLite.cs" />
-    <Compile Include="SQLClient.cs" />
-    <Compile Include="Memory.cs" />
-    <Compile Include="Utility.cs" />
-    <Compile Include="S3Utils.cs" />
-    <Compile Include="GridSpacingItemDecoration.cs" />
-    <Compile Include="MemoryAdapter.cs" />
-    <Compile Include="SpanSizeLookup.cs" />
-    <Compile Include="MainMemoryActivity.cs" />
-    <Compile Include="BaseActivity.cs" />
-    <Compile Include="ChildStickyListViewHolder.cs" />
-    <Compile Include="FontFactory.cs" />
+    <Compile Include="Activity\BaseActivity.cs" />
+    <Compile Include="Activity\BluetoothLEActivity.cs" />
+    <Compile Include="Service\BackgroundService.cs" />
+    <Compile Include="Service\GetWebPulseService.cs" />
+    <Compile Include="Activity\MainMemoryActivity.cs" />
+    <Compile Include="Adapter\MemoryAdapter.cs" />
+    <Compile Include="Receiver\NoteReceiver.cs" />
+    <Compile Include="Receiver\NoteWakefulReceiver.cs" />
+    <Compile Include="Helper\ChildStickyListViewHolder.cs" />
+    <Compile Include="Helper\FontFactory.cs" />
+    <Compile Include="Helper\GridSpacingItemDecoration.cs" />
+    <Compile Include="Helper\Memory.cs" />
+    <Compile Include="Application\NoteworthyApplication.cs" />
+    <Compile Include="Helper\S3Utils.cs" />
+    <Compile Include="Helper\SpanSizeLookup.cs" />
+    <Compile Include="Helper\SQLClient.cs" />
+    <Compile Include="Helper\SQLite.cs" />
+    <Compile Include="Helper\SQLiteAsync.cs" />
+    <Compile Include="Helper\Utility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="packages.config" />
+    <None Include="Activity\MainActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml" />
@@ -146,7 +147,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
-    <Folder Include="Web\" />
+    <Folder Include="Activity\" />
+    <Folder Include="Service\" />
+    <Folder Include="Adapter\" />
+    <Folder Include="Receiver\" />
+    <Folder Include="Helper\" />
+    <Folder Include="Application\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\OpenSans-Bold.ttf" />

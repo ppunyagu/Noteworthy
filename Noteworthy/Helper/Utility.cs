@@ -26,6 +26,8 @@ namespace Noteworthy
 
 		public static string audio_file_format = "mp3";
 
+		public static string wearable_device_address = "DD:58:58:4A:34:8D";
+
 		public static string Db_file
 		{
 			get
