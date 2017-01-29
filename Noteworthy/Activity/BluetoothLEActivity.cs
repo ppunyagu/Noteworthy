@@ -50,22 +50,35 @@ namespace Noteworthy
 					BluetoothLEGattCallback mGattCallback = new BluetoothLEGattCallback();
 					mGattCallback.OnDeviceReady += (sendFunction, gatt) =>
 					{
-						byte[] bufferWrite = { 111, 222, 255, 1 };
-						BluetoothGattService service = gatt.GetService(UUID.FromString("00001530-1212-efde-1523-785feabcd123"));
-						if (service == null)
+						try
 						{
-							Log.Debug("OnDeviceFound", "Service is null");
-							return;
+							byte[] bufferWrite = ASCIIEncoding.Default.GetBytes("hi from up");
+							BluetoothGattService service = gatt.GetService(UUID.FromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e"));
+							if (service == null)
+							{
+								Log.Debug("OnDeviceFound", "Service is null");
+								return;
+							}
+							BluetoothGattCharacteristic characteristic = service.GetCharacteristic(UUID.FromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e"));
+							if (characteristic == null)
+							{
+								Log.Debug("OnDeviceFound", "Characteristic is null");
+								return;
+							}
+							characteristic.SetValue(bufferWrite);
+							characteristic.WriteType = GattWriteType.NoResponse;
+							if (gatt.WriteCharacteristic(characteristic))
+							{
+								Log.Debug("OnDeviceFound", "Write Successfull!");
+							}
+							else {
+								Log.Debug("OnDeviceFound", "Write Unsuccessful... :(");
+							}
 						}
-						BluetoothGattCharacteristic characteristic = service.GetCharacteristic(UUID.FromString("00001532-1212-efde-1523-785feabcd123"));
-						if (characteristic == null)
+						catch (Exception ex)
 						{
-							Log.Debug("OnDeviceFound", "Characteristic is null");
-							return;
+							Utility.ExceptionHandler("BluetoothLEActivity", "OnDeviceFound", ex);
 						}
-						characteristic.SetValue(bufferWrite);
-						characteristic.WriteType = GattWriteType.NoResponse;
-						gatt.WriteCharacteristic(characteristic);
 					};
 					mBluetoothGatt = device.ConnectGatt(this, true, mGattCallback);
 				};
