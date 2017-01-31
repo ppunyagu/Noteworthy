@@ -28,7 +28,7 @@ namespace Noteworthy
 
 			// Set this on if want Audio Background: 
 			Utility.server_heartRate = "http://157.252.187.36:5000";
-			//NoteworthyApplication.StartBackgroundService();
+			NoteworthyApplication.StartBackgroundService();
 
 			//DataBase Initalize
 			Utility.InitializeDatabase();
@@ -59,9 +59,11 @@ namespace Noteworthy
 
 			Label = FindViewById<TextView>(Resource.Id.textYourText);
 
+			/*
 			Intent intent = new Intent(this, typeof(MainMemoryActivity));
 			intent.SetFlags(ActivityFlags.NewTask);
 			StartActivity(intent);
+			*/
 		}
 
 		private void ButtonStartRecording(object sender, EventArgs e)

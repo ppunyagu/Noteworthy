@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Threading;
+using System.Text;
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Util;
 using Android.Media;
+using Android.Bluetooth;
+
+using Java.Util;
 
 
 namespace Noteworthy
@@ -15,19 +19,75 @@ namespace Noteworthy
 	{
 		static readonly string TAG = "X:" + typeof(BackgroundService).Name;
 		static readonly int TimerWait = 6000;
-		Timer timer;
+		System.Threading.Timer timer;
 		DateTime startTime;
 		bool isStarted = false;
 		bool isRecording = false;
 		string AudioRecordedPath;
 		MediaRecorder mediaRecorder;
 
+		public BluetoothGatt mBluetoothGatt;
+
+		public bool isConnected = false;
+
 		public const string ActionAudioRecorded = "ACTION_AUDIO_RECORDED";
 		public const string ExtraAudioRecordedAbsolutePath = "EXTRA_AUDIORECORDED_ABSOLUTE_PATH";
+
+		public UUID RX_SERVICE_UUID = UUID.FromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
+		public UUID RX_CHAR_UUID = UUID.FromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
+		public UUID TX_CHAR_UUID = UUID.FromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
+		public UUID CCCD = UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
 
 		public override void OnCreate()
 		{
 			mediaRecorder = new MediaRecorder();
+
+			BluetoothAdapter adapter = BluetoothAdapter.DefaultAdapter;
+
+			LEScanCallBack _scanCallBack;
+
+			if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.Lollipop)
+			{
+				_scanCallBack = new LEScanCallBack();
+				_scanCallBack.OnDeviceFound += (sender, device) =>
+				{
+					adapter.BluetoothLeScanner.StopScan(_scanCallBack);
+					BluetoothLEGattCallback mGattCallback = new BluetoothLEGattCallback();
+					mGattCallback.OnDeviceReadyWrite += OnDeviceReadWriteFunc;
+					mGattCallback.dataReceivedFromDevice += actionDataReceivedFromDevice;
+					mBluetoothGatt = device.ConnectGatt(this, true, mGattCallback);
+				};
+			}
+			else {
+				throw new Exception("Needs to be greated than API level 21.");
+			}
+			adapter.BluetoothLeScanner.StartScan(_scanCallBack);
+		}
+
+		public void OnDeviceReadWriteFunc(BluetoothGatt gatt)
+		{
+			try
+			{
+				if (!isConnected)
+				{
+					isConnected = true;
+				}
+				byte[] bufferWrite = ASCIIEncoding.Default.GetBytes("master");
+				BluetoothGattService RxService = gatt.GetService(RX_SERVICE_UUID);
+				BluetoothGattCharacteristic RxChar = RxService.GetCharacteristic(RX_CHAR_UUID);
+				RxChar.SetValue(bufferWrite);
+				if (gatt.WriteCharacteristic(RxChar))
+				{
+					Log.Debug("OnDeviceReadyWrite", "Write Successfull!");
+				}
+				else {
+					Log.Debug("OnDeviceReadyWrite", "Write Unsuccessful... :(");
+				}
+			}
+			catch (Exception ex)
+			{
+				Utility.ExceptionHandler("BluetoothLEActivity", "OnDeviceReadyWrite", ex);
+			}
 		}
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
@@ -36,7 +96,7 @@ namespace Noteworthy
 			{
 				startTime = DateTime.UtcNow;
 				Log.Debug(TAG, $"Starting the service, at {startTime}.");
-				timer = new Timer(HandleTimerCallback, startTime, 0, TimerWait);
+				timer = new System.Threading.Timer(HandleTimerCallback, startTime, 0, TimerWait);
 				isStarted = true;
 			}
 			return StartCommandResult.NotSticky;
@@ -60,10 +120,17 @@ namespace Noteworthy
 			base.OnDestroy();
 		}
 
-		async void HandleTimerCallback(object state)
+		void actionDataReceivedFromDevice(string valFromDevice)
+		{
+			Log.Debug("actionDataReceivedFromDevice", string.Format("valFromDevice {0}", valFromDevice));
+		}
+
+		void HandleTimerCallback(object state)
 		{
 			try
 			{
+				OnDeviceReadWriteFunc(mBluetoothGatt);
+				/*
 				using (var objGetWebPulseService = new GetWebPulseService())
 				{
 					bool isStressed = objGetWebPulseService.IsPulseStressed();
@@ -89,13 +156,11 @@ namespace Noteworthy
 							Log.Debug("HandleTimerCallback", "Pulse is not stress and is recording, so should stop recording and broadcast event");
 							StopRecording();
 							isRecording = false;
-							/*
-							var url = await S3Utils.UploadS3Audios(AudioRecordedPath, "Audio");
-							var AudioRecordedIntent = new Intent(url);
-							{
-								AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, url);
-							}
-							*/
+							//var url = await S3Utils.UploadS3Audios(AudioRecordedPath, "Audio");
+							//var AudioRecordedIntent = new Intent(url);
+							//{
+								//AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, url);
+							//}
 
 							var AudioRecordedIntent = new Intent(ActionAudioRecorded);
 							{
@@ -105,6 +170,7 @@ namespace Noteworthy
 						}
 					}
 				}
+				*/
 			}
 			catch (Exception ex)
 			{
