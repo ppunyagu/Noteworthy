@@ -59,11 +59,11 @@ namespace Noteworthy
 
 			Label = FindViewById<TextView>(Resource.Id.textYourText);
 
-			/*
+
 			Intent intent = new Intent(this, typeof(MainMemoryActivity));
 			intent.SetFlags(ActivityFlags.NewTask);
 			StartActivity(intent);
-			*/
+
 		}
 
 		private void ButtonStartRecording(object sender, EventArgs e)

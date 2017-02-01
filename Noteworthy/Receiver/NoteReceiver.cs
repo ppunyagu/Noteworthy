@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Android.Media;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -18,23 +17,20 @@ namespace Noteworthy
 	[IntentFilter(new[] { BackgroundService.ActionAudioRecorded })]
 	public class NoteReceiver : BroadcastReceiver
 	{
-		public async override void OnReceive(Context context, Intent intent)
+		public override void OnReceive(Context context, Intent intent)
 		{
 			try
 			{
 				var stringUri = intent.GetStringExtra(BackgroundService.ExtraAudioRecordedAbsolutePath);
 				// Update to AWSS3 for processing to audio
-				var url = await S3Utils.UploadS3Audios(stringUri, "Audio");
+				//var url = await S3Utils.UploadS3Audios(stringUri, "Audio");
 				Log.Debug("NoteReceiver", string.Format("Audio stored local at path: {0}", stringUri != null ? stringUri : "<null>"));
 				Memory _mem = new Memory();
 				_mem.Audio_path = stringUri;
-				_mem.Time = DateTime.Now;
 
-				MediaPlayer mp = new MediaPlayer();
-				mp.SetDataSource(stringUri);
-				_mem.Duration = mp.Duration;
-				mp.Release();
-				mp.Dispose();
+				_mem.Duration = Convert.ToInt32(intent.GetStringExtra(BackgroundService.ExtraAudioRecordedDurations));
+
+				_mem.ConversationText = "";
 
 				SQLClient<Memory>.Instance.Insert(_mem);
 				NoteworthyApplication.NotifyMemorized(stringUri);

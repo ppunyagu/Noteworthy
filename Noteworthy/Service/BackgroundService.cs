@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Diagnostics;
 using System.Text;
 using Android.App;
 using Android.Content;
@@ -21,6 +22,7 @@ namespace Noteworthy
 		static readonly int TimerWait = 6000;
 		System.Threading.Timer timer;
 		DateTime startTime;
+		Stopwatch stopWatch;
 		bool isStarted = false;
 		bool isRecording = false;
 		string AudioRecordedPath;
@@ -32,6 +34,7 @@ namespace Noteworthy
 
 		public const string ActionAudioRecorded = "ACTION_AUDIO_RECORDED";
 		public const string ExtraAudioRecordedAbsolutePath = "EXTRA_AUDIORECORDED_ABSOLUTE_PATH";
+		public const string ExtraAudioRecordedDurations = "EXTRA_AUDIORECORDED_DURATIONS";
 
 		public UUID RX_SERVICE_UUID = UUID.FromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
 		public UUID RX_CHAR_UUID = UUID.FromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
@@ -41,6 +44,8 @@ namespace Noteworthy
 		public override void OnCreate()
 		{
 			mediaRecorder = new MediaRecorder();
+
+			stopWatch = new Stopwatch();
 
 			BluetoothAdapter adapter = BluetoothAdapter.DefaultAdapter;
 
@@ -123,6 +128,45 @@ namespace Noteworthy
 		void actionDataReceivedFromDevice(string valFromDevice)
 		{
 			Log.Debug("actionDataReceivedFromDevice", string.Format("valFromDevice {0}", valFromDevice));
+			if (Convert.ToInt32(valFromDevice) == 1)
+			{
+				if (!isRecording)
+				{
+					Log.Debug("HandleTimerCallback", "Pulse is stress and is not recording, so should begin recording");
+					stopWatch.Start();
+					StartRecording();
+					isRecording = true;
+				}
+				else {
+					Log.Debug("HandleTimerCallback", "Pulse is stress but is already recording, so should continue recording");
+				}
+			}
+			else {
+				if (!isRecording)
+				{
+					Log.Debug("HandleTimerCallback", "Pulse is not stress and is not recording, so should continue idle");
+				}
+				else {
+					Log.Debug("HandleTimerCallback", "Pulse is not stress and is recording, so should stop recording and broadcast event");
+					stopWatch.Stop();
+					Log.Debug("HandleTimerCallback", string.Format("Recording was {0} seconds", (stopWatch.ElapsedMilliseconds / 1000)));
+					StopRecording();
+					isRecording = false;
+					//var url = await S3Utils.UploadS3Audios(AudioRecordedPath, "Audio");
+					//var AudioRecordedIntent = new Intent(url);
+					//{
+					//AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, url);
+					//}
+
+					var AudioRecordedIntent = new Intent(ActionAudioRecorded);
+					{
+						AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, AudioRecordedPath);
+						AudioRecordedIntent.PutExtra(ExtraAudioRecordedDurations, (stopWatch.ElapsedMilliseconds / 1000).ToString());
+					}
+					stopWatch.Reset();
+					SendBroadcast(AudioRecordedIntent);
+				}
+			}
 		}
 
 		void HandleTimerCallback(object state)
@@ -130,47 +174,6 @@ namespace Noteworthy
 			try
 			{
 				OnDeviceReadWriteFunc(mBluetoothGatt);
-				/*
-				using (var objGetWebPulseService = new GetWebPulseService())
-				{
-					bool isStressed = objGetWebPulseService.IsPulseStressed();
-					Log.Debug(TAG, String.Format("isStressed: {0}, isRecording: {1}", isStressed, isRecording));
-					if (isStressed)
-					{
-						if (!isRecording)
-						{
-							Log.Debug("HandleTimerCallback", "Pulse is stress and is not recording, so should begin recording");
-							StartRecording();
-							isRecording = true;
-						}
-						else {
-							Log.Debug("HandleTimerCallback", "Pulse is stress but is already recording, so should continue recording");
-						}
-					}
-					else {
-						if (!isRecording)
-						{
-							Log.Debug("HandleTimerCallback", "Pulse is not stress and is not recording, so should continue idle");
-						}
-						else {
-							Log.Debug("HandleTimerCallback", "Pulse is not stress and is recording, so should stop recording and broadcast event");
-							StopRecording();
-							isRecording = false;
-							//var url = await S3Utils.UploadS3Audios(AudioRecordedPath, "Audio");
-							//var AudioRecordedIntent = new Intent(url);
-							//{
-								//AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, url);
-							//}
-
-							var AudioRecordedIntent = new Intent(ActionAudioRecorded);
-							{
-								AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, AudioRecordedPath);
-							}
-							SendBroadcast(AudioRecordedIntent);
-						}
-					}
-				}
-				*/
 			}
 			catch (Exception ex)
 			{
