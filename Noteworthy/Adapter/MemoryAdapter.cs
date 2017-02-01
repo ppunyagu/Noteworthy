@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Android.Views;
 using Android.Widget;
 using Android.App;
+using Android.Media;
 
 namespace Noteworthy
 {
@@ -12,6 +13,9 @@ namespace Noteworthy
 		//1 for child and 0 for header , viewtype
 		public List<Item> data;
 		Activity _context;
+		public MediaPlayer mp;
+		public string CurrentTrack;
+
 		public MemoryAdapter(Activity context, List<Item> data)
 		{
 			this.data = data;
@@ -92,7 +96,6 @@ namespace Noteworthy
 					case 1:
 						view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.RowMemoriesLayout, parent, false);
 						ChildStickyListViewHolder childHolder = new ChildStickyListViewHolder(_context, this, view);
-
 						return childHolder;
 				}
 			}

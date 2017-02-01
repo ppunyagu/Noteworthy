@@ -4,6 +4,8 @@ using Android.Content;
 using Android.Views;
 using Android.Graphics;
 using Android.App;
+using Android.Util;
+using Android.Media;
 
 namespace Noteworthy
 {
@@ -18,7 +20,8 @@ namespace Noteworthy
 		public LinearLayout lnrOrderPending;
 		public LinearLayout lnrRow;
 		public Item _item;
-		public ChildStickyListViewHolder(Activity context, dynamic adapter, View itemView) : base(itemView)
+
+		public ChildStickyListViewHolder(Activity context, MemoryAdapter adapter, View itemView) : base(itemView)
 		{
 			_context = context;
 
@@ -34,18 +37,43 @@ namespace Noteworthy
 
 			lnrRow.Click += (sender, e) =>
 			{
-				//LinearLayout lnrvw = (LinearLayout)sender;
-				//var SelectedOrderTag = (OrderTag)lnrvw.Tag;
 				if (adapter is MemoryAdapter)
 				{
-					/* #todo Implement inner memory activity
-					var SelectedOrder = _item.Order; //SelectedOrderTag.objOrder;
-					Intent intent = new Intent(_context, typeof(OrderActivity));
-					intent.PutExtra("OrderStatus", SelectedOrder.OrderStatus.ToString());
-					intent.PutExtra("OrderID", SelectedOrder.ID);
-					context.StartActivityForResult(intent, 11);
-					Helper.EnterAnim(context);
-					*/
+					if (adapter.mp == null)
+					{
+						Log.Debug("ChildStickyListViewHolder", string.Format("Playing audio from path: {0}", _item.memory.Audio_path));
+						adapter.mp = new MediaPlayer();
+						adapter.mp.SetDataSource(_item.memory.Audio_path);
+						adapter.CurrentTrack = _item.memory.Audio_path;
+						adapter.mp.Prepare();
+						adapter.mp.Start();
+					}
+					else {
+						if (adapter.mp.IsPlaying)
+						{
+							adapter.mp.Stop();
+							adapter.mp.Reset();
+							adapter.mp = null;
+
+							if (adapter.CurrentTrack != _item.memory.Audio_path)
+							{
+								Log.Debug("ChildStickyListViewHolder", string.Format("Playing audio from path: {0}", _item.memory.Audio_path));
+								adapter.mp = new MediaPlayer();
+								adapter.mp.SetDataSource(_item.memory.Audio_path);
+								adapter.CurrentTrack = _item.memory.Audio_path;
+								adapter.mp.Prepare();
+								adapter.mp.Start();
+							}
+						}
+						else {
+							Log.Debug("ChildStickyListViewHolder", string.Format("Playing audio from path: {0}", _item.memory.Audio_path));
+							adapter.mp = new MediaPlayer();
+							adapter.mp.SetDataSource(_item.memory.Audio_path);
+							adapter.CurrentTrack = _item.memory.Audio_path;
+							adapter.mp.Prepare();
+							adapter.mp.Start();
+						}
+					}
 				}
 			};
 		}
