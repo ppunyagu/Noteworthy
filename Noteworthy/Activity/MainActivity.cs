@@ -7,6 +7,7 @@ using Android.Runtime;
 using Android.Widget;
 using Android.OS;
 using Android.Speech;
+using Android.Media;
 using Android.Util;
 
 namespace Noteworthy
@@ -19,6 +20,7 @@ namespace Noteworthy
 		SpeechRecognizer Recognizer { get; set; }
 		Intent SpeechIntent { get; set; }
 		TextView Label { get; set; }
+		bool isTranslating = false;
 
 		protected override void OnCreate(Bundle bundle)
 		{
@@ -28,13 +30,17 @@ namespace Noteworthy
 
 			// Set this on if want Audio Background: 
 			Utility.server_heartRate = "http://157.252.187.36:5000";
-			NoteworthyApplication.StartBackgroundService();
+			//NoteworthyApplication.StartBackgroundService();
 
 			//DataBase Initalize
 			Utility.InitializeDatabase();
 
 			Recognizer = SpeechRecognizer.CreateSpeechRecognizer(this);
 			Recognizer.SetRecognitionListener(this);
+
+			AudioManager am = (AudioManager)GetSystemService(Context.AudioService);
+			am.SetStreamMute(Stream.System, true);
+
 
 			SpeechIntent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
 			SpeechIntent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
@@ -43,15 +49,6 @@ namespace Noteworthy
 			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 5000);
 			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 20000);
 
-			// Set Up
-			/*
-			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
-			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
-			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
-			SpeechIntent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
-			SpeechIntent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
-			*/
-
 			var button = FindViewById<Button>(Resource.Id.btnRecord);
 			var buttonStop = FindViewById<Button>(Resource.Id.btnStopRecord);
 			button.Click += ButtonStartRecording;
@@ -59,21 +56,32 @@ namespace Noteworthy
 
 			Label = FindViewById<TextView>(Resource.Id.textYourText);
 
+			Label.Text = "";
 
+			/*
 			Intent intent = new Intent(this, typeof(MainMemoryActivity));
 			intent.SetFlags(ActivityFlags.NewTask);
 			StartActivity(intent);
+			*/
 
 		}
 
 		private void ButtonStartRecording(object sender, EventArgs e)
 		{
-			Recognizer.StartListening(SpeechIntent);
+			if (!isTranslating)
+			{
+				Recognizer.StartListening(SpeechIntent);
+				isTranslating = true;
+			}
 		}
 
 		private void ButtonStopRecording(object sender, EventArgs e)
 		{
-			Recognizer.StopListening();
+			if (isTranslating)
+			{
+				Recognizer.StopListening();
+				isTranslating = false;
+			}
 		}
 
 		public void OnResults(Bundle results)
@@ -81,8 +89,9 @@ namespace Noteworthy
 			var matches = results.GetStringArrayList(SpeechRecognizer.ResultsRecognition);
 			if (matches != null && matches.Count > 0)
 			{
-				Label.Text = matches[0];
+				Label.Text = Label.Text + matches[0] + " ";
 			}
+			Recognizer.StartListening(SpeechIntent);
 		}
 
 		public void OnReadyForSpeech(Bundle @params)
