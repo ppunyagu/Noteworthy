@@ -20,9 +20,9 @@ namespace Noteworthy
 		SpeechRecognizer Recognizer { get; set; }
 		Intent SpeechIntent { get; set; }
 		TextView Label { get; set; }
-		bool isTranslating = false;
+		AudioManager am;
 
-		protected override void OnCreate(Bundle bundle)
+		protected async override void OnCreate(Bundle bundle)
 		{
 			base.OnCreate(bundle);
 
@@ -32,15 +32,18 @@ namespace Noteworthy
 			Utility.server_heartRate = "http://157.252.187.36:5000";
 			//NoteworthyApplication.StartBackgroundService();
 
+			using (var objTranslationService = new TranslationService())
+			{
+				objTranslationService.ConvertAudioToText("/sdcard/2017-31-1--20-16-58.mp3");
+			}
+
 			//DataBase Initalize
 			Utility.InitializeDatabase();
 
 			Recognizer = SpeechRecognizer.CreateSpeechRecognizer(this);
 			Recognizer.SetRecognitionListener(this);
 
-			AudioManager am = (AudioManager)GetSystemService(Context.AudioService);
-			am.SetStreamMute(Stream.System, true);
-
+			am = (AudioManager)GetSystemService(Context.AudioService);
 
 			SpeechIntent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
 			SpeechIntent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
@@ -64,24 +67,21 @@ namespace Noteworthy
 			StartActivity(intent);
 			*/
 
+
+
+
 		}
 
 		private void ButtonStartRecording(object sender, EventArgs e)
 		{
-			if (!isTranslating)
-			{
-				Recognizer.StartListening(SpeechIntent);
-				isTranslating = true;
-			}
+			am.SetStreamMute(Stream.System, true);
+			Recognizer.StartListening(SpeechIntent);
 		}
 
 		private void ButtonStopRecording(object sender, EventArgs e)
 		{
-			if (isTranslating)
-			{
-				Recognizer.StopListening();
-				isTranslating = false;
-			}
+			am.SetStreamMute(Stream.System, false);
+			Recognizer.StopListening();
 		}
 
 		public void OnResults(Bundle results)
@@ -112,6 +112,11 @@ namespace Noteworthy
 		public void OnError([GeneratedEnum] SpeechRecognizerError error)
 		{
 			Log.Debug("OnError", error.ToString());
+			if (error == SpeechRecognizerError.SpeechTimeout)
+			{
+				Log.Debug("isSpeechTimeout", "No conversation: Should stop service");
+				Recognizer.StopListening();
+			}
 		}
 
 		public void OnBufferReceived(byte[] buffer) { }
