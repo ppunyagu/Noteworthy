@@ -80,6 +80,25 @@ namespace Noteworthy
 				_lstMemories = SQLClient<Memory>.Instance.GetAll().ToList();
 				if (_lstMemories.Count > 0)
 				{
+					// This is slow, should instead keep unqueried memory and only do those
+					foreach (var mem in _lstMemories)
+					{
+						if (mem.ConversationText == "")
+						{
+							using (var objTranslationService = new TranslationService())
+							{
+								string translationText = objTranslationService.GetTextFromJobId(mem.JobId);
+								if (translationText != "")
+								{
+									mem.ConversationText = translationText;
+								}
+								else {
+									mem.ConversationText = "<Unrecognizable>";
+								}
+								SQLClient<Memory>.Instance.InsertOrReplace(mem);
+							}
+						}
+					}
 					_lstMemories.Reverse();
 					SetMemoryAdapter();
 				}

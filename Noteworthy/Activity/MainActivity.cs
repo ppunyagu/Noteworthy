@@ -32,10 +32,15 @@ namespace Noteworthy
 			Utility.server_heartRate = "http://157.252.187.36:5000";
 			//NoteworthyApplication.StartBackgroundService();
 
+			// For testing
+			/*
 			using (var objTranslationService = new TranslationService())
 			{
-				objTranslationService.ConvertAudioToText("/sdcard/2017-31-1--20-16-58.mp3");
+				//objTranslationService.ConvertAudioToText("/storage/emulated/0/Download/zero.wav");
+				//objTranslationService.ConvertAudioToText("/sdcard/2017-31-1--20-16-58.mp3");
+				objTranslationService.GetTextFromJobId(1925114);
 			}
+			*/
 
 			//DataBase Initalize
 			Utility.InitializeDatabase();

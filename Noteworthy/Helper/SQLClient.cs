@@ -191,6 +191,8 @@ namespace Noteworthy
 			{
 				lock (DataBase.SyncObject)
 				{
+					return DataBase.Instance.Conn.InsertOrReplace(entity);
+					/*
 					if (typeof(T) == typeof(Memory))
 					{
 						return Insert(entity);
@@ -198,6 +200,7 @@ namespace Noteworthy
 					else {
 						return DataBase.Instance.Conn.InsertOrReplace(entity);
 					}
+					*/
 				}
 			}
 			catch (Exception ex)

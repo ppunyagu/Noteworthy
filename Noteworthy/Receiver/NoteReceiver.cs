@@ -22,19 +22,28 @@ namespace Noteworthy
 			try
 			{
 				var stringUri = intent.GetStringExtra(BackgroundService.ExtraAudioRecordedAbsolutePath);
+				Log.Debug("NoteReceiver", string.Format("Audio stored local at path: {0}", stringUri != null ? stringUri : "<null>"));
+
 				// Update to AWSS3 for processing to audio
 				//var url = await S3Utils.UploadS3Audios(stringUri, "Audio");
-				Log.Debug("NoteReceiver", string.Format("Audio stored local at path: {0}", stringUri != null ? stringUri : "<null>"));
-				Memory _mem = new Memory();
-				_mem.Audio_path = stringUri;
 
-				_mem.Duration = Convert.ToInt32(intent.GetStringExtra(BackgroundService.ExtraAudioRecordedDurations));
-
-				_mem.ConversationText = "";
-
-				SQLClient<Memory>.Instance.Insert(_mem);
-				NoteworthyApplication.NotifyMemorized(stringUri);
-				//Log.Debug("NoteReceiver", string.Format("Audio Uploaded to S3 file with url called: {0}", url != null ? url : "<null>"));
+				using (var objTranslationService = new TranslationService())
+				{
+					int jobId = objTranslationService.ConvertAudioToText(stringUri);
+					if (jobId != 0)
+					{
+						Memory _mem = new Memory();
+						_mem.Audio_path = stringUri;
+						_mem.Duration = Convert.ToInt32(intent.GetStringExtra(BackgroundService.ExtraAudioRecordedDurations));
+						_mem.JobId = jobId;
+						_mem.ConversationText = "";
+						SQLClient<Memory>.Instance.Insert(_mem);
+						NoteworthyApplication.NotifyMemorized(stringUri);
+					}
+					else {
+						Log.Debug("NoteReceiver", "TranslationService failed");
+					}
+				}
 			}
 			catch (Exception ex)
 			{

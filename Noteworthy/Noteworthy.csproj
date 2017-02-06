@@ -113,6 +113,8 @@
     <Compile Include="Activity\MainActivity.cs" />
     <Compile Include="Helper\BluetoothLEGattCallback.cs" />
     <Compile Include="Service\TranslationService.cs" />
+    <Compile Include="Helper\FormUpload.cs" />
+    <Compile Include="Service\BackgroundServiceNativeApproach.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
