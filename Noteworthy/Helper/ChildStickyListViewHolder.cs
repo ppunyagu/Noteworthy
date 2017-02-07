@@ -38,6 +38,36 @@ namespace Noteworthy
 				txtPendingUsername.SetTypeface(FontFactory.GetFontOpenSansBold(_context), TypefaceStyle.Normal);
 				txtPendigTime.SetTypeface(FontFactory.GetFontOpenSansRegular(_context), TypefaceStyle.Normal);
 
+				lnrRow.Click += (sender, e) =>
+				{
+					//AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context, Resource.Style.Theme_AppCompat);
+					AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context, Resource.Style.CustomDialog);
+					//alertDialog.SetInverseBackgroundForced(false);
+					alertDialog.SetCancelable(false);
+
+					string message = _item.memory.ConversationText;
+					alertDialog.SetMessage(message);
+					alertDialog.SetPositiveButton(
+						"OK",
+						delegate
+						{
+						}
+					);
+					/*
+					alertDialog.SetNegativeButton(
+						Resources.GetString(Resource.String.Cancel),
+						delegate
+						{
+							Helper.logger.LogEvent("SnapScreenshot Decline ImageSearch");
+							OnBackPressed();
+						}
+					);
+					*/
+					AlertDialog alert = alertDialog.Create();
+					alert.RequestWindowFeature((int)WindowFeatures.NoTitle);
+					alert.Show();
+				};
+
 				btnPlayOrStop.Click += (sender, e) =>
 				{
 					if (adapter is MemoryAdapter)
