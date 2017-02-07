@@ -40,9 +40,7 @@ namespace Noteworthy
 
 				lnrRow.Click += (sender, e) =>
 				{
-					//AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context, Resource.Style.Theme_AppCompat);
 					AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context, Resource.Style.CustomDialog);
-					//alertDialog.SetInverseBackgroundForced(false);
 					alertDialog.SetCancelable(false);
 
 					string message = _item.memory.ConversationText;
@@ -53,16 +51,6 @@ namespace Noteworthy
 						{
 						}
 					);
-					/*
-					alertDialog.SetNegativeButton(
-						Resources.GetString(Resource.String.Cancel),
-						delegate
-						{
-							Helper.logger.LogEvent("SnapScreenshot Decline ImageSearch");
-							OnBackPressed();
-						}
-					);
-					*/
 					AlertDialog alert = alertDialog.Create();
 					alert.RequestWindowFeature((int)WindowFeatures.NoTitle);
 					alert.Show();
