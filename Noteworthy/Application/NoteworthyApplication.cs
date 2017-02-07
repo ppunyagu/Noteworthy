@@ -180,5 +180,25 @@ namespace Noteworthy
 		{
 			context.StopService(new Intent(context, typeof(BackgroundService)));
 		}
+
+		public static void StartBackgroundServiceNative()
+		{
+			StartBackgroundServiceNative(Application.Context);
+		}
+
+		public static void StartBackgroundServiceNative(Context context)
+		{
+			context.StartService(new Intent(context, typeof(BackgroundServiceNativeApproach)));
+		}
+
+		public static void StopBackgroundServiceNative()
+		{
+			StopBackgroundServiceNative(Application.Context);
+		}
+
+		public static void StopBackgroundServiceNative(Context context)
+		{
+			context.StopService(new Intent(context, typeof(BackgroundServiceNativeApproach)));
+		}
 	}
 }

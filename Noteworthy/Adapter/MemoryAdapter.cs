@@ -14,6 +14,7 @@ namespace Noteworthy
 		public List<Item> data;
 		Activity _context;
 		public MediaPlayer mp;
+		public Button currentPlayButton;
 		public string CurrentTrack;
 
 		public MemoryAdapter(Activity context, List<Item> data)
@@ -58,7 +59,16 @@ namespace Noteworthy
 						objChildHolder._item = item;
 						var childOrderItem = (data[position]).memory;
 						//string orderStatus = childOrderItem.Audio_path.ToString();
-						objChildHolder.txtPendingUsername.Text = childOrderItem.Audio_path;
+						string[] convo = childOrderItem.ConversationText.Split(Environment.NewLine.ToCharArray());
+						string convoText;
+						if (convo.Length >= 2)
+						{
+							convoText = convo[1];
+						}
+						else {
+							convoText = "<unrecognizable>";
+						}
+						objChildHolder.txtPendingUsername.Text = convoText;
 						objChildHolder.txtPendigTime.Text = Utility.GetRelativeTime(childOrderItem.Time.GetValueOrDefault());
 						//objChildHolder.txtPendingOrderStutas.Text = "<Speech to Text will go here>";
 						objChildHolder.txtPendingOrderStutas.Text = string.Format("Seconds: {0}", childOrderItem.Duration.ToString());

@@ -18,11 +18,11 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical">
-            <ImageView
-                android:src="@drawable/circle"
+            <Button
+                android:background="@drawable/play"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:id="@+id/imgOrderPendingProfilePic" />
+                android:id="@+id/btnPlayOrStop" />
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"

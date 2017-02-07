@@ -40,6 +40,8 @@ namespace Noteworthy
 
 		public bool isConnected = false;
 
+		public bool isTranslating = false;
+
 		public const string ActionAudioRecorded = "ACTION_AUDIO_RECORDED";
 		public const string ExtraAudioRecordedAbsolutePath = "EXTRA_AUDIORECORDED_ABSOLUTE_PATH";
 		public const string ExtraAudioRecordedDurations = "EXTRA_AUDIORECORDED_DURATIONS";
@@ -63,13 +65,6 @@ namespace Noteworthy
 			am = (AudioManager)GetSystemService(Context.AudioService);
 
 			SpeechRecognitionResult = "";
-
-			SpeechIntent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
-			SpeechIntent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
-			SpeechIntent.PutExtra(RecognizerIntent.ExtraCallingPackage, PackageName);
-			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 5000);
-			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 5000);
-			SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 20000);
 
 			//SpeechRecognitionStart();
 
@@ -96,7 +91,7 @@ namespace Noteworthy
 			else {
 				throw new Exception("Needs to be greated than API level 21.");
 			}
-			adapter.BluetoothLeScanner.StartScan(_scanCallBack);
+			//adapter.BluetoothLeScanner.StartScan(_scanCallBack);
 		}
 
 		public void OnDeviceReadWriteFunc(BluetoothGatt gatt)
@@ -185,7 +180,7 @@ namespace Noteworthy
 						AudioRecordedIntent.PutExtra(ExtraAudioRecordedDurations, (stopWatch.ElapsedMilliseconds / 1000).ToString());
 					}
 					stopWatch.Reset();
-					SendBroadcast(AudioRecordedIntent);
+					//SendBroadcast(AudioRecordedIntent);
 				}
 			}
 		}
@@ -194,6 +189,15 @@ namespace Noteworthy
 		{
 			try
 			{
+				if (!isTranslating)
+				{
+					SpeechRecognitionStop();
+					SpeechRecognitionStart();
+				}
+				else {
+					SpeechRecognitionContinue();
+				}
+				/*
 				if (!isConnected)
 				{
 					Log.Debug("HandleTimerCallback", "Has not connected to wearable device");
@@ -201,6 +205,7 @@ namespace Noteworthy
 				else {
 					OnDeviceReadWriteFunc(mBluetoothGatt);
 				}
+				*/
 			}
 			catch (Exception ex)
 			{
@@ -210,8 +215,8 @@ namespace Noteworthy
 
 		void StartRecording()
 		{
-			// Start Speech Recognition
-			SpeechRecognitionStart();
+			// Stop and destroy Speech Recognition
+			SpeechRecognitionStop();
 
 			string path = "/sdcard/" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + "." + Utility.audio_file_format;
 			AudioRecordedPath = path;
@@ -226,8 +231,6 @@ namespace Noteworthy
 
 		void StopRecording()
 		{
-			// Stop Speech Recognition
-			SpeechRecognitionStop();
 
 			Log.Debug(TAG, "Finish recording audio file to path");
 			mediaRecorder.Stop();
@@ -236,34 +239,59 @@ namespace Noteworthy
 
 		void SpeechRecognitionStart()
 		{
-			am.SetStreamMute(Stream.System, true);
+			if (!isTranslating)
+			{
+				handler.Post(() =>
+				{
+					am.SetStreamMute(Stream.System, true);
+					SpeechIntent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+					SpeechIntent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+					SpeechIntent.PutExtra(RecognizerIntent.ExtraCallingPackage, PackageName);
+					SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 5000);
+					SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 5000);
+					SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 20000);
+					Log.Debug("SpeechRecognitionStart", "StartListening");
+					Recognizer.StartListening(SpeechIntent);
+				});
+				isTranslating = true;
+			}
+		}
+
+		void SpeechRecognitionContinue()
+		{
 			handler.Post(() =>
 			{
-				Log.Debug("SpeechRecognitionStart", "StartListening");
+				Log.Debug("SpeechRecognitionContinue", "ContinueListening");
 				Recognizer.StartListening(SpeechIntent);
 			});
 		}
 
 		void SpeechRecognitionStop()
 		{
-			am.SetStreamMute(Stream.System, false);
-			handler.Post(() =>
+			if (isTranslating)
 			{
-				Recognizer.StopListening();
-			});
+				handler.Post(() =>
+				{
+					am.SetStreamMute(Stream.System, false);
+					Recognizer.StopListening();
+					Recognizer.Cancel();
+					Recognizer.Destroy();
+				});
+				isTranslating = false;
+			}
 		}
 
 		public void OnResults(Bundle results)
 		{
-			var matches = results.GetStringArrayList(SpeechRecognizer.ResultsRecognition);
-			if (matches != null && matches.Count > 0)
-			{
-				SpeechRecognitionResult = SpeechRecognitionResult + matches[0] + " ";
-			}
-			Log.Debug("OnResults", SpeechRecognitionResult);
 			handler.Post(() =>
 			{
-				Recognizer.StartListening(SpeechIntent);
+				var matches = results.GetStringArrayList(SpeechRecognizer.ResultsRecognition);
+				if (matches != null && matches.Count > 0)
+				{
+					SpeechRecognitionResult = SpeechRecognitionResult + matches[0] + " ";
+				}
+				Log.Debug("OnResults", SpeechRecognitionResult);
+				//Recognizer.StartListening(SpeechIntent);
 			});
 		}
 
@@ -288,7 +316,8 @@ namespace Noteworthy
 			if (error == SpeechRecognizerError.SpeechTimeout)
 			{
 				Log.Debug("isSpeechTimeout", "No conversation: Should stop service");
-				Recognizer.StopListening();
+				SpeechRecognitionStop();
+				//Recognizer.StopListening();
 			}
 		}
 

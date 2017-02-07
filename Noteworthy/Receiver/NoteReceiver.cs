@@ -37,6 +37,7 @@ namespace Noteworthy
 						_mem.Duration = Convert.ToInt32(intent.GetStringExtra(BackgroundService.ExtraAudioRecordedDurations));
 						_mem.JobId = jobId;
 						_mem.ConversationText = "";
+						_mem.Time = DateTime.Now;
 						SQLClient<Memory>.Instance.Insert(_mem);
 						NoteworthyApplication.NotifyMemorized(stringUri);
 					}

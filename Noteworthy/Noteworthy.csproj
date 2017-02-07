@@ -147,6 +147,8 @@
     <AndroidResource Include="Resources\layout\RowSimpleTextLayout.axml" />
     <AndroidResource Include="Resources\drawable\down.png" />
     <AndroidResource Include="Resources\layout\MainRecording.axml" />
+    <AndroidResource Include="Resources\drawable\play.png" />
+    <AndroidResource Include="Resources\drawable\stop.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
