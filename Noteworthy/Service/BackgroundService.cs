@@ -9,7 +9,8 @@ using Android.Util;
 using Android.Media;
 using Android.Bluetooth;
 using System.Collections.Generic;
-
+using Android.Speech;
+using Android.Runtime;
 using Java.Util;
 
 
@@ -17,7 +18,7 @@ namespace Noteworthy
 {
 
 	[Service (Exported = false)]
-	public class BackgroundService : Service
+	public class BackgroundService : Service, IRecognitionListener 
 	{
 		static readonly string TAG = "X:" + typeof(BackgroundService).Name;
 		Stopwatch stopWatch;
@@ -32,6 +33,12 @@ namespace Noteworthy
 
 		public bool isConnected = false;
 
+		SpeechRecognizer Recognizer { get; set; }
+		AudioManager am;
+		Intent SpeechIntent { get; set; }
+		Handler handler;
+		public bool isTranslating = false;
+
 		public const string ActionAudioRecorded = "ACTION_AUDIO_RECORDED";
 		public const string ExtraAudioRecordedAbsolutePath = "EXTRA_AUDIORECORDED_ABSOLUTE_PATH";
 		public const string ExtraAudioRecordedDurations = "EXTRA_AUDIORECORDED_DURATIONS";
@@ -43,9 +50,14 @@ namespace Noteworthy
 
 		public override void OnCreate()
 		{
+
+			handler = new Handler();
+
 			mediaRecorder = new MediaRecorder();
 
 			stopWatch = new Stopwatch();
+
+			am = (AudioManager)GetSystemService(Context.AudioService);
 
 			stopWatchForStressTrigger = new Stopwatch();
 
@@ -89,75 +101,81 @@ namespace Noteworthy
 
 		void actionDataReceivedFromDevice(string valFromDevice)
 		{
-			Log.Debug("actionDataReceivedFromDevice", string.Format("valFromDevice {0}", valFromDevice));
-			int latestHeartRate = Int32.Parse(valFromDevice);
-			heartRates.Enqueue(latestHeartRate);
-			if (heartRates.Count == 50)
+			try
 			{
-				int sum = 0;
-				double sumOfDerivation = 0;
-				foreach (int heartRate in heartRates)
+				Log.Debug("actionDataReceivedFromDevice", string.Format("valFromDevice {0}", valFromDevice));
+				int latestHeartRate = Int32.Parse(valFromDevice);
+				heartRates.Enqueue(latestHeartRate);
+				if (heartRates.Count == 10)
 				{
-					sum += heartRate;
-					sumOfDerivation += (heartRate) * (heartRate);
-				}
-				double average = sum / heartRates.Count;
-				Log.Debug("getStandardDeviation", string.Format("Average: {0}", average));
-				double sumOfDerivationAverage = sumOfDerivation / (heartRates.Count - 1);
-				double standardDeviation = Math.Sqrt(sumOfDerivationAverage - (average * average));
-				Log.Debug("actionDataReceivedFromDevice", string.Format("StandardDeviation {0}", standardDeviation));
-				if (latestHeartRate > (average + standardDeviation) || latestHeartRate < (average - standardDeviation))
-				{
-					Log.Debug("actionDataReceivedFromDevice", "isStress should start recording!");
-					if (!isRecording)
+					int sum = 0;
+					double sumOfDerivation = 0;
+					foreach (int heartRate in heartRates)
 					{
-						Log.Debug("actionDataReceivedFromDevice", "Pulse is stress and is not recording, so should begin recording");
-						stopWatch.Start();
-						stopWatchForStressTrigger.Start();
-						StartRecording();
-						isRecording = true;
+						sum += heartRate;
+						sumOfDerivation += (heartRate) * (heartRate);
 					}
-					else {
-						Log.Debug("actionDataReceivedFromDevice", "Pulse is stress but is already recording, so should continue recording");
-					}
-				}
-				else {
-					if (!stopWatchForStressTrigger.IsRunning)
+					double average = sum / heartRates.Count;
+					Log.Debug("getStandardDeviation", string.Format("Average: {0}", average));
+					double sumOfDerivationAverage = sumOfDerivation / (heartRates.Count - 1);
+					double standardDeviation = Math.Sqrt(sumOfDerivationAverage - (average * average));
+					Log.Debug("actionDataReceivedFromDevice", string.Format("StandardDeviation {0}", standardDeviation));
+
+					// Logic for isStress conditional statement => Background Recording
+					if (latestHeartRate > (average + standardDeviation) || latestHeartRate < (average - standardDeviation))
 					{
+						Log.Debug("actionDataReceivedFromDevice", "isStress should start recording!");
 						if (!isRecording)
 						{
-							Log.Debug("actionDataReceivedFromDevice", "Pulse is not stress and is not recording, so should continue idle");
+							Log.Debug("actionDataReceivedFromDevice", "Pulse is stress and is not recording, so should begin testing if speaking");
+							SpeechRecognitionStart();
 						}
 						else {
-							Log.Debug("actionDataReceivedFromDevice", "Pulse is not stress and is recording, so should stop recording and broadcast event");
-							stopWatch.Stop();
-							Log.Debug("actionDataReceivedFromDevice", string.Format("Recording was {0} seconds", (stopWatch.ElapsedMilliseconds / 1000)));
-							stopWatch.Reset();
-							isRecording = false;
-							StopRecording();
-
-							var AudioRecordedIntent = new Intent(ActionAudioRecorded);
-							{
-								AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, AudioRecordedPath);
-								AudioRecordedIntent.PutExtra(ExtraAudioRecordedDurations, (stopWatch.ElapsedMilliseconds / 1000).ToString());
-							}
-							stopWatch.Reset();
-							SendBroadcast(AudioRecordedIntent);
+							Log.Debug("actionDataReceivedFromDevice", "Pulse is stress but is already recording, so should continue recording");
 						}
 					}
 					else {
-						Log.Debug("actionDataReceivedFromDevice", "Stopwatch Stress trigger is running despite not stress should continue recording!");
-						Log.Debug("actionDataReceivedFromDevice", "isStress should start recording!");
-						if (stopWatchForStressTrigger.ElapsedMilliseconds > 10000)
+						if (!stopWatchForStressTrigger.IsRunning)
 						{
-							Log.Debug("actionDataReceivedFromDevice", "Stopwatch Stress trigger should stop");
-							stopWatchForStressTrigger.Stop();
-							stopWatchForStressTrigger.Reset();
+							if (!isRecording)
+							{
+								Log.Debug("actionDataReceivedFromDevice", "Pulse is not stress and is not recording, so should continue idle");
+							}
+							else {
+								Log.Debug("actionDataReceivedFromDevice", "Pulse is not stress and is recording, so should stop recording and broadcast event");
+								stopWatch.Stop();
+								Log.Debug("actionDataReceivedFromDevice", string.Format("Recording was {0} seconds", (stopWatch.ElapsedMilliseconds / 1000)));
+								stopWatch.Reset();
+								isRecording = false;
+								StopRecording();
+
+								var AudioRecordedIntent = new Intent(ActionAudioRecorded);
+								{
+									AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, AudioRecordedPath);
+									AudioRecordedIntent.PutExtra(ExtraAudioRecordedDurations, (stopWatch.ElapsedMilliseconds / 1000).ToString());
+								}
+								stopWatch.Reset();
+								SendBroadcast(AudioRecordedIntent);
+							}
+						}
+						else {
+							Log.Debug("actionDataReceivedFromDevice", "Stopwatch Stress trigger is running despite not stress should continue recording!");
+							Log.Debug("actionDataReceivedFromDevice", "isStress should start recording!");
+							if (stopWatchForStressTrigger.ElapsedMilliseconds > 10000)
+							{
+								Log.Debug("actionDataReceivedFromDevice", "Stopwatch Stress trigger should stop");
+								stopWatchForStressTrigger.Stop();
+								stopWatchForStressTrigger.Reset();
+							}
 						}
 					}
-				}
 
-				heartRates.Dequeue();
+					heartRates.Dequeue();
+				}
+			}
+			catch (Exception ex)
+			{
+				Utility.ExceptionHandler("BackgroundService", "actionDataReceivedFromDevice", ex);
 			}
 		}
 
@@ -180,5 +198,114 @@ namespace Noteworthy
 			mediaRecorder.Stop();
 			mediaRecorder.Reset();
 		}
+
+		void SpeechRecognitionStart()
+		{
+			if (!isTranslating)
+			{
+				handler.Post(() =>
+				{
+					am.SetStreamMute(Stream.System, true);
+					am.SetStreamMute(Stream.Alarm, true);
+					am.SetStreamMute(Stream.Notification, true);
+					am.SetStreamMute(Stream.Music, true);
+					am.SetStreamMute(Stream.Ring, true);
+
+					Recognizer = SpeechRecognizer.CreateSpeechRecognizer(this);
+					Recognizer.SetRecognitionListener(this);
+
+					SpeechIntent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+					SpeechIntent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+					SpeechIntent.PutExtra(RecognizerIntent.ExtraCallingPackage, PackageName);
+					SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 5000);
+					SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 5000);
+					SpeechIntent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 20000);
+					Log.Debug("SpeechRecognitionStart", "StartListening");
+					Recognizer.StartListening(SpeechIntent);
+				});
+				isTranslating = true;
+			}
+		}
+
+		void SpeechRecognitionContinue()
+		{
+			handler.Post(() =>
+			{
+				Log.Debug("SpeechRecognitionContinue", "ContinueListening");
+				Recognizer.StartListening(SpeechIntent);
+			});
+		}
+
+		void SpeechRecognitionStop()
+		{
+			if (isTranslating)
+			{
+				handler.Post(() =>
+				{
+					/* Unmute audio
+					am.SetStreamMute(Stream.System, false);
+					am.SetStreamMute(Stream.Alarm, false);
+					am.SetStreamMute(Stream.Notification, false);
+					am.SetStreamMute(Stream.Music, false);
+					am.SetStreamMute(Stream.Ring, false);
+					*/
+
+					Recognizer.StopListening();
+					Recognizer.Cancel();
+					Recognizer.Destroy();
+				});
+				isTranslating = false;
+			}
+		}
+
+		public void OnResults(Bundle results)
+		{
+			handler.Post(() =>
+			{
+				var matches = results.GetStringArrayList(SpeechRecognizer.ResultsRecognition);
+				if (matches != null && matches.Count > 0)
+				{
+					Log.Debug("OnResults", matches[0]);
+					SpeechRecognitionStop();
+					Log.Debug("OnResults", "Pulse is stress, is not recording and is speaking! should start recording");
+					stopWatch.Start();
+					stopWatchForStressTrigger.Start();
+					StartRecording();
+					isRecording = true;
+				}
+				else {
+					SpeechRecognitionStop();
+				}
+			});
+		}
+
+		public void OnReadyForSpeech(Bundle @params)
+		{
+			Log.Debug(TAG, "OnReadyForSpeech");
+		}
+
+		public void OnBeginningOfSpeech()
+		{
+			Log.Debug(TAG, "OnBeginningOfSpeech");
+		}
+
+		public void OnEndOfSpeech()
+		{
+			Log.Debug(TAG, "OnEndOfSpeech");
+		}
+
+		public void OnError([GeneratedEnum] SpeechRecognizerError error)
+		{
+			Log.Debug("SpeechReconizer: OnError", error.ToString());
+			SpeechRecognitionStop();
+		}
+
+		public void OnBufferReceived(byte[] buffer) { }
+
+		public void OnEvent(int eventType, Bundle @params) { }
+
+		public void OnPartialResults(Bundle partialResults) { }
+
+		public void OnRmsChanged(float rmsdB) { }
 	}
 }
