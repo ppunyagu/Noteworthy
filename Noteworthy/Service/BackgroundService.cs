@@ -8,6 +8,7 @@ using Android.OS;
 using Android.Util;
 using Android.Media;
 using Android.Bluetooth;
+using System.Collections.Generic;
 
 using Java.Util;
 
@@ -19,14 +20,13 @@ namespace Noteworthy
 	public class BackgroundService : Service
 	{
 		static readonly string TAG = "X:" + typeof(BackgroundService).Name;
-		static readonly int TimerWait = 6000;
-		System.Threading.Timer timer;
-		DateTime startTime;
 		Stopwatch stopWatch;
-		bool isStarted = false;
+		Stopwatch stopWatchForStressTrigger;
 		bool isRecording = false;
 		string AudioRecordedPath;
 		MediaRecorder mediaRecorder;
+
+		Queue<int> heartRates = new Queue<int>();
 
 		public BluetoothGatt mBluetoothGatt;
 
@@ -47,6 +47,8 @@ namespace Noteworthy
 
 			stopWatch = new Stopwatch();
 
+			stopWatchForStressTrigger = new Stopwatch();
+
 			BluetoothAdapter adapter = BluetoothAdapter.DefaultAdapter;
 
 			LEScanCallBack _scanCallBack;
@@ -58,7 +60,6 @@ namespace Noteworthy
 				{
 					adapter.BluetoothLeScanner.StopScan(_scanCallBack);
 					BluetoothLEGattCallback mGattCallback = new BluetoothLEGattCallback();
-					mGattCallback.OnDeviceReadyWrite += OnDeviceReadWriteFunc;
 					mGattCallback.dataReceivedFromDevice += actionDataReceivedFromDevice;
 					mBluetoothGatt = device.ConnectGatt(this, true, mGattCallback);
 				};
@@ -69,41 +70,8 @@ namespace Noteworthy
 			adapter.BluetoothLeScanner.StartScan(_scanCallBack);
 		}
 
-		public void OnDeviceReadWriteFunc(BluetoothGatt gatt)
-		{
-			try
-			{
-				if (!isConnected)
-				{
-					isConnected = true;
-				}
-				byte[] bufferWrite = ASCIIEncoding.Default.GetBytes("master");
-				BluetoothGattService RxService = gatt.GetService(RX_SERVICE_UUID);
-				BluetoothGattCharacteristic RxChar = RxService.GetCharacteristic(RX_CHAR_UUID);
-				RxChar.SetValue(bufferWrite);
-				if (gatt.WriteCharacteristic(RxChar))
-				{
-					Log.Debug("OnDeviceReadyWrite", "Write Successfull!");
-				}
-				else {
-					Log.Debug("OnDeviceReadyWrite", "Write Unsuccessful... :(");
-				}
-			}
-			catch (Exception ex)
-			{
-				Utility.ExceptionHandler("BluetoothLEActivity", "OnDeviceReadyWrite", ex);
-			}
-		}
-
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
 		{
-			if (!isStarted)
-			{
-				startTime = DateTime.UtcNow;
-				Log.Debug(TAG, $"Starting the service, at {startTime}.");
-				timer = new System.Threading.Timer(HandleTimerCallback, startTime, 0, TimerWait);
-				isStarted = true;
-			}
 			return StartCommandResult.NotSticky;
 		}
 
@@ -116,68 +84,80 @@ namespace Noteworthy
 
 		public override void OnDestroy()
 		{
-			timer.Dispose();
-			timer = null;
-			isStarted = false;
-
-			TimeSpan runtime = DateTime.UtcNow.Subtract(startTime);
-			Log.Debug(TAG, $"Simple Service destroyed at {DateTime.UtcNow} after running for {runtime:c}.");
 			base.OnDestroy();
 		}
 
 		void actionDataReceivedFromDevice(string valFromDevice)
 		{
 			Log.Debug("actionDataReceivedFromDevice", string.Format("valFromDevice {0}", valFromDevice));
-			if (Convert.ToInt32(valFromDevice) == 1)
+			int latestHeartRate = Int32.Parse(valFromDevice);
+			heartRates.Enqueue(latestHeartRate);
+			if (heartRates.Count == 50)
 			{
-				if (!isRecording)
+				int sum = 0;
+				double sumOfDerivation = 0;
+				foreach (int heartRate in heartRates)
 				{
-					Log.Debug("HandleTimerCallback", "Pulse is stress and is not recording, so should begin recording");
-					stopWatch.Start();
-					StartRecording();
-					isRecording = true;
+					sum += heartRate;
+					sumOfDerivation += (heartRate) * (heartRate);
 				}
-				else {
-					Log.Debug("HandleTimerCallback", "Pulse is stress but is already recording, so should continue recording");
-				}
-			}
-			else {
-				if (!isRecording)
+				double average = sum / heartRates.Count;
+				Log.Debug("getStandardDeviation", string.Format("Average: {0}", average));
+				double sumOfDerivationAverage = sumOfDerivation / (heartRates.Count - 1);
+				double standardDeviation = Math.Sqrt(sumOfDerivationAverage - (average * average));
+				Log.Debug("actionDataReceivedFromDevice", string.Format("StandardDeviation {0}", standardDeviation));
+				if (latestHeartRate > (average + standardDeviation) || latestHeartRate < (average - standardDeviation))
 				{
-					Log.Debug("HandleTimerCallback", "Pulse is not stress and is not recording, so should continue idle");
-				}
-				else {
-					Log.Debug("HandleTimerCallback", "Pulse is not stress and is recording, so should stop recording and broadcast event");
-					stopWatch.Stop();
-					Log.Debug("HandleTimerCallback", string.Format("Recording was {0} seconds", (stopWatch.ElapsedMilliseconds / 1000)));
-					StopRecording();
-					isRecording = false;
-					//var url = await S3Utils.UploadS3Audios(AudioRecordedPath, "Audio");
-					//var AudioRecordedIntent = new Intent(url);
-					//{
-					//AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, url);
-					//}
-
-					var AudioRecordedIntent = new Intent(ActionAudioRecorded);
+					Log.Debug("actionDataReceivedFromDevice", "isStress should start recording!");
+					if (!isRecording)
 					{
-						AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, AudioRecordedPath);
-						AudioRecordedIntent.PutExtra(ExtraAudioRecordedDurations, (stopWatch.ElapsedMilliseconds / 1000).ToString());
+						Log.Debug("actionDataReceivedFromDevice", "Pulse is stress and is not recording, so should begin recording");
+						stopWatch.Start();
+						stopWatchForStressTrigger.Start();
+						StartRecording();
+						isRecording = true;
 					}
-					stopWatch.Reset();
-					SendBroadcast(AudioRecordedIntent);
+					else {
+						Log.Debug("actionDataReceivedFromDevice", "Pulse is stress but is already recording, so should continue recording");
+					}
 				}
-			}
-		}
+				else {
+					if (!stopWatchForStressTrigger.IsRunning)
+					{
+						if (!isRecording)
+						{
+							Log.Debug("actionDataReceivedFromDevice", "Pulse is not stress and is not recording, so should continue idle");
+						}
+						else {
+							Log.Debug("actionDataReceivedFromDevice", "Pulse is not stress and is recording, so should stop recording and broadcast event");
+							stopWatch.Stop();
+							Log.Debug("actionDataReceivedFromDevice", string.Format("Recording was {0} seconds", (stopWatch.ElapsedMilliseconds / 1000)));
+							stopWatch.Reset();
+							isRecording = false;
+							StopRecording();
 
-		void HandleTimerCallback(object state)
-		{
-			try
-			{
-				OnDeviceReadWriteFunc(mBluetoothGatt);
-			}
-			catch (Exception ex)
-			{
-				Utility.ExceptionHandler("BackgroundService", "HandleTimerCallback", ex);
+							var AudioRecordedIntent = new Intent(ActionAudioRecorded);
+							{
+								AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, AudioRecordedPath);
+								AudioRecordedIntent.PutExtra(ExtraAudioRecordedDurations, (stopWatch.ElapsedMilliseconds / 1000).ToString());
+							}
+							stopWatch.Reset();
+							SendBroadcast(AudioRecordedIntent);
+						}
+					}
+					else {
+						Log.Debug("actionDataReceivedFromDevice", "Stopwatch Stress trigger is running despite not stress should continue recording!");
+						Log.Debug("actionDataReceivedFromDevice", "isStress should start recording!");
+						if (stopWatchForStressTrigger.ElapsedMilliseconds > 10000)
+						{
+							Log.Debug("actionDataReceivedFromDevice", "Stopwatch Stress trigger should stop");
+							stopWatchForStressTrigger.Stop();
+							stopWatchForStressTrigger.Reset();
+						}
+					}
+				}
+
+				heartRates.Dequeue();
 			}
 		}
 

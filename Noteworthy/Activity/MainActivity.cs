@@ -30,7 +30,7 @@ namespace Noteworthy
 
 			// Set this on if want Audio Background: 
 			Utility.server_heartRate = "http://157.252.187.36:5000";
-			//NoteworthyApplication.StartBackgroundService();
+			NoteworthyApplication.StartBackgroundService();
 			//NoteworthyApplication.StartBackgroundServiceNative();
 
 			// For testing

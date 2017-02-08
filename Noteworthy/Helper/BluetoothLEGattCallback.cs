@@ -65,8 +65,11 @@ namespace Noteworthy
 				if (!isWrite)
 				{
 					Log.Debug("OnServicesDiscovered", "Is now ready to write!");
-					handler(gatt);
-					isWrite = true;
+					if (handler != null)
+					{
+						handler(gatt);
+						isWrite = true;
+					}
 				}
 			}
 		}
