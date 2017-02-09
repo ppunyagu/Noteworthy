@@ -115,6 +115,7 @@
     <Compile Include="Service\TranslationService.cs" />
     <Compile Include="Helper\FormUpload.cs" />
     <Compile Include="Service\BackgroundServiceNativeApproach.cs" />
+    <Compile Include="Receiver\CheckNotifyActionReceiver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

@@ -26,24 +26,21 @@ namespace Noteworthy
 
 				// Update to AWSS3 for processing to audio
 				//var url = await S3Utils.UploadS3Audios(stringUri, "Audio");
-
-				using (var objTranslationService = new TranslationService())
+				//NoteworthyApplication.NotifyMemorized(stringUri);
+				var objTranslationService = new TranslationService();
+				int jobId = objTranslationService.ConvertAudioToText(stringUri);
+				if (jobId != 0)
 				{
-					int jobId = objTranslationService.ConvertAudioToText(stringUri);
-					if (jobId != 0)
-					{
-						Memory _mem = new Memory();
-						_mem.Audio_path = stringUri;
-						_mem.Duration = Convert.ToInt32(intent.GetStringExtra(BackgroundService.ExtraAudioRecordedDurations));
-						_mem.JobId = jobId;
-						_mem.ConversationText = "";
-						_mem.Time = DateTime.Now;
-						SQLClient<Memory>.Instance.Insert(_mem);
-						NoteworthyApplication.NotifyMemorized(stringUri);
-					}
-					else {
-						Log.Debug("NoteReceiver", "TranslationService failed");
-					}
+					Memory _mem = new Memory();
+					_mem.Audio_path = stringUri;
+					_mem.Duration = Convert.ToInt32(intent.GetStringExtra(BackgroundService.ExtraAudioRecordedDurations));
+					_mem.JobId = jobId;
+					_mem.ConversationText = "<notloaded>";
+					_mem.Time = DateTime.Now;
+					SQLClient<Memory>.Instance.Insert(_mem);
+				}
+				else {
+					Log.Debug("NoteReceiver", "TranslationService failed");
 				}
 			}
 			catch (Exception ex)

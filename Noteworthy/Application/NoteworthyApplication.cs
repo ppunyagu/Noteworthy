@@ -23,10 +23,8 @@ namespace Noteworthy
 			}
 		}
 
-		public static void NotifyMemorized(string Path, bool notAttachedToLook = true)
+		public static void NotifyMemorized(string Path = "", bool notAttachedToLook = true)
 		{
-			if (Path == null)
-				return;
 
 			CreateMemorizedNotification(Path, notAttachedToLook);
 		}

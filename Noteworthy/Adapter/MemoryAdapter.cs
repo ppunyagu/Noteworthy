@@ -69,7 +69,7 @@ namespace Noteworthy
 							convoText = "<unrecognizable>";
 						}
 						objChildHolder.txtPendingUsername.Text = convoText;
-						objChildHolder.txtPendigTime.Text = Utility.GetRelativeTime(childOrderItem.Time.GetValueOrDefault());
+						objChildHolder.txtPendigTime.Text = childOrderItem.Time.GetValueOrDefault().ToString("hh:mm tt");
 						//objChildHolder.txtPendingOrderStutas.Text = "<Speech to Text will go here>";
 						objChildHolder.txtPendingOrderStutas.Text = string.Format("Seconds: {0}", childOrderItem.Duration.ToString());
 						//objChildHolder.txtPendingUsername.Text = "<What's this?>";

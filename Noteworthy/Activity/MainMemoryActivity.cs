@@ -80,10 +80,11 @@ namespace Noteworthy
 				_lstMemories = SQLClient<Memory>.Instance.GetAll().ToList();
 				if (_lstMemories.Count > 0)
 				{
+					/*
 					// This is slow, should instead keep unqueried memory and only do those
 					foreach (var mem in _lstMemories)
 					{
-						if (mem.ConversationText == "")
+						if (mem.ConversationText == "<notloaded>" || mem.ConversationText == "<transcribing>")
 						{
 							using (var objTranslationService = new TranslationService())
 							{
@@ -93,12 +94,13 @@ namespace Noteworthy
 									mem.ConversationText = translationText;
 								}
 								else {
-									mem.ConversationText = "<Unrecognizable>";
+									mem.ConversationText = "<transcribing>";
 								}
 								SQLClient<Memory>.Instance.InsertOrReplace(mem);
 							}
 						}
 					}
+					*/
 					_lstMemories.Reverse();
 					SetMemoryAdapter();
 				}

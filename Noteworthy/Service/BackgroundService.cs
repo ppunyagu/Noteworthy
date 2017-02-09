@@ -21,9 +21,13 @@ namespace Noteworthy
 	public class BackgroundService : Service, IRecognitionListener 
 	{
 		static readonly string TAG = "X:" + typeof(BackgroundService).Name;
+		static readonly int TimerWait = 10000;
+		System.Threading.Timer timer;
+		DateTime startTime;
 		Stopwatch stopWatch;
 		Stopwatch stopWatchForStressTrigger;
 		bool isRecording = false;
+		bool isStarted = false;
 		string AudioRecordedPath;
 		MediaRecorder mediaRecorder;
 
@@ -40,6 +44,7 @@ namespace Noteworthy
 		public bool isTranslating = false;
 
 		public const string ActionAudioRecorded = "ACTION_AUDIO_RECORDED";
+		public const string ActionCheckNotifyUser = "ACTION_NOTIFY_USER";
 		public const string ExtraAudioRecordedAbsolutePath = "EXTRA_AUDIORECORDED_ABSOLUTE_PATH";
 		public const string ExtraAudioRecordedDurations = "EXTRA_AUDIORECORDED_DURATIONS";
 
@@ -84,6 +89,13 @@ namespace Noteworthy
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
 		{
+			if (!isStarted)
+			{
+				startTime = DateTime.UtcNow;
+				Log.Debug(TAG, $"Starting the service, at {startTime}.");
+				timer = new System.Threading.Timer(HandleTimerCallback, startTime, 0, TimerWait);
+				isStarted = true;
+			}
 			return StartCommandResult.NotSticky;
 		}
 
@@ -93,9 +105,28 @@ namespace Noteworthy
 			return null;
 		}
 
+		void HandleTimerCallback(object state)
+		{
+			try
+			{
+				var ActionCheckNotifyUserIntent = new Intent(ActionCheckNotifyUser);
+				SendBroadcast(ActionCheckNotifyUserIntent);
+			}
+			catch (Exception ex)
+			{
+				Utility.ExceptionHandler("BackgroundService", "HandleTimerCallback", ex);
+			}
+		}
+
 
 		public override void OnDestroy()
 		{
+			timer.Dispose();
+			timer = null;
+			isStarted = false;
+
+			TimeSpan runtime = DateTime.UtcNow.Subtract(startTime);
+			Log.Debug(TAG, $"Simple Service destroyed at {DateTime.UtcNow} after running for {runtime:c}.");
 			base.OnDestroy();
 		}
 
@@ -106,7 +137,7 @@ namespace Noteworthy
 				Log.Debug("actionDataReceivedFromDevice", string.Format("valFromDevice {0}", valFromDevice));
 				int latestHeartRate = Int32.Parse(valFromDevice);
 				heartRates.Enqueue(latestHeartRate);
-				if (heartRates.Count == 10)
+				if (heartRates.Count >= 50)
 				{
 					int sum = 0;
 					double sumOfDerivation = 0;
@@ -129,6 +160,12 @@ namespace Noteworthy
 						{
 							Log.Debug("actionDataReceivedFromDevice", "Pulse is stress and is not recording, so should begin testing if speaking");
 							SpeechRecognitionStart();
+							/*
+							stopWatch.Start();
+							stopWatchForStressTrigger.Start();
+							StartRecording();
+							isRecording = true;
+							*/
 						}
 						else {
 							Log.Debug("actionDataReceivedFromDevice", "Pulse is stress but is already recording, so should continue recording");
@@ -145,7 +182,6 @@ namespace Noteworthy
 								Log.Debug("actionDataReceivedFromDevice", "Pulse is not stress and is recording, so should stop recording and broadcast event");
 								stopWatch.Stop();
 								Log.Debug("actionDataReceivedFromDevice", string.Format("Recording was {0} seconds", (stopWatch.ElapsedMilliseconds / 1000)));
-								stopWatch.Reset();
 								isRecording = false;
 								StopRecording();
 
