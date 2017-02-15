@@ -24,6 +24,7 @@ namespace Noteworthy
 				if (_lstMemories.Count > 0)
 				{
 					// This is slow, should instead keep unqueried memory and only do those
+					Log.Debug("CheckNotifyActionReceiver", "Checking for new conversation completion");
 					foreach (var mem in _lstMemories)
 					{
 						if (mem.ConversationText == "<notloaded>")

@@ -34,7 +34,7 @@
                 android:paddingLeft="8dp"
                 android:paddingRight="0dp"
                 android:adjustViewBounds="true"
-                android:src="@drawable/noteworthyleft" />
+                android:src="@drawable/icon2" />
             <ImageView
                 android:id="@+id/imageViewplaces"
                 android:layout_width="match_parent"

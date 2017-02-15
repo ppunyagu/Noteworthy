@@ -48,7 +48,7 @@ namespace Noteworthy
 						}
 						else {
 							DateTime theDate = new DateTime(DateTime.Now.Year, 1, 1).AddDays(Convert.ToInt32(item.text) - 1);
-							itemController.header_title.Text = theDate.ToString("dd-M");;
+							itemController.header_title.Text = theDate.ToString("D");;
 						}
 						itemController.header_title.SetTypeface(Android.Graphics.Typeface.DefaultBold, Android.Graphics.TypefaceStyle.Bold);
 						itemController.header_title.SetTextColor(res.GetColor(Resource.Color.black));
@@ -71,7 +71,7 @@ namespace Noteworthy
 						objChildHolder.txtPendingUsername.Text = convoText;
 						objChildHolder.txtPendigTime.Text = childOrderItem.Time.GetValueOrDefault().ToString("hh:mm tt");
 						//objChildHolder.txtPendingOrderStutas.Text = "<Speech to Text will go here>";
-						objChildHolder.txtPendingOrderStutas.Text = string.Format("Seconds: {0}", childOrderItem.Duration.ToString());
+						objChildHolder.txtPendingOrderStutas.Text = string.Format("{0}s", childOrderItem.Duration);
 						//objChildHolder.txtPendingUsername.Text = "<What's this?>";
 						/* #todo Circle image with Text for seconds
 						if (childOrderItem.user != null && !string.IsNullOrEmpty(childOrderItem.user.resolved.ProfilePhoto))

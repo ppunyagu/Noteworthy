@@ -150,6 +150,8 @@
     <AndroidResource Include="Resources\layout\MainRecording.axml" />
     <AndroidResource Include="Resources\drawable\play.png" />
     <AndroidResource Include="Resources\drawable\stop.png" />
+    <AndroidResource Include="Resources\drawable\icon3.png" />
+    <AndroidResource Include="Resources\drawable\icon2.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
