@@ -59,6 +59,7 @@ namespace Noteworthy
 						objChildHolder._item = item;
 						var childOrderItem = (data[position]).memory;
 						//string orderStatus = childOrderItem.Audio_path.ToString();
+						/*
 						string[] convo = childOrderItem.ConversationText.Split(Environment.NewLine.ToCharArray());
 						string convoText;
 						if (convo.Length >= 2)
@@ -68,7 +69,8 @@ namespace Noteworthy
 						else {
 							convoText = "<unrecognizable>";
 						}
-						objChildHolder.txtPendingUsername.Text = convoText;
+						*/
+						objChildHolder.txtPendingUsername.Text = childOrderItem.StressStarterSentence;
 						objChildHolder.txtPendigTime.Text = childOrderItem.Time.GetValueOrDefault().ToString("hh:mm tt");
 						//objChildHolder.txtPendingOrderStutas.Text = "<Speech to Text will go here>";
 						objChildHolder.txtPendingOrderStutas.Text = string.Format("{0}s", childOrderItem.Duration);

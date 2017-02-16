@@ -47,7 +47,7 @@ namespace Noteworthy
 						largeIcon: null,
 						title: appName,
 						content: text,
-						secondContent: "",
+						secondContent: Path,
 						contentIntent: resultPendingIntent,
 						ongoing: false,
 						autoCancel: true,
@@ -99,7 +99,7 @@ namespace Noteworthy
 			bool setDefaults,
 			Bitmap bigPictureIcon = null,
 			bool showSecondContent = true,
-			int iconResId = Resource.Drawable.noteworthyleft)
+			int iconResId = Resource.Drawable.icon2)
 		{
 			var builder = new NotificationCompat.Builder(Application.Context)
 				.SetSmallIcon(iconResId);

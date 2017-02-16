@@ -42,18 +42,59 @@ namespace Noteworthy
 				{
 					AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context, Resource.Style.CustomDialog);
 					alertDialog.SetCancelable(false);
-
 					string message = _item.memory.ConversationText;
-					alertDialog.SetMessage(message);
-					alertDialog.SetPositiveButton(
-						"OK",
-						delegate
+					if (message == "Not yet transcribed! Try again in a few seconds")
+					{
+						using (var objTranslationService = new TranslationService())
 						{
+							string translationText = objTranslationService.GetTextFromJobId(_item.memory.JobId);
+							if (translationText != "still transcribing")
+							{
+								if (translationText == "")
+								{
+									translationText = "We were unable to transcribe the conversation. :(";
+								}
+								_item.memory.ConversationText = translationText;
+								SQLClient<Memory>.Instance.InsertOrReplace(_item.memory);
+								message = _item.memory.ConversationText;
+								alertDialog.SetMessage(translationText);
+								alertDialog.SetPositiveButton(
+									"OK",
+									delegate
+									{
+									}
+								);
+								AlertDialog alert = alertDialog.Create();
+								alert.RequestWindowFeature((int)WindowFeatures.NoTitle);
+								alert.Show();
+							}
+							else  {
+								alertDialog.SetMessage("Transcribing.....\n Please wait for a few seconds before trying again.");
+								alertDialog.SetPositiveButton(
+									"OK",
+									delegate
+									{
+									}
+								);
+								AlertDialog alert = alertDialog.Create();
+								alert.RequestWindowFeature((int)WindowFeatures.NoTitle);
+								alert.Show();
+							}
 						}
-					);
-					AlertDialog alert = alertDialog.Create();
-					alert.RequestWindowFeature((int)WindowFeatures.NoTitle);
-					alert.Show();
+					}
+					else {
+						message = _item.memory.ConversationText;
+						alertDialog.SetMessage(message);
+						alertDialog.SetPositiveButton(
+							"OK",
+							delegate
+							{
+							}
+						);
+						AlertDialog alert = alertDialog.Create();
+						alert.RequestWindowFeature((int)WindowFeatures.NoTitle);
+						alert.Show();
+					}
 				};
 
 				btnPlayOrStop.Click += (sender, e) =>

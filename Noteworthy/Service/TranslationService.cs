@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO;
 using System.Net;
+using Android.Widget;
 using System.Text;
 
 namespace Noteworthy
@@ -69,8 +70,8 @@ namespace Noteworthy
 			catch (Exception ex)
 			{
 				Utility.ExceptionHandler("TranslationService", "GetTextFromJobId", ex);
+				return "still transcribing";
 			}
-			return "";
 		}
 		
 		public void Dispose()

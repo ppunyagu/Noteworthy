@@ -26,5 +26,8 @@ namespace Noteworthy
 		[JsonIgnore]
 		public string ConversationText { get; set; }
 
+		[JsonIgnore]
+		public string StressStarterSentence { get; set; }
+
 	}
 }

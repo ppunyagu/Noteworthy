@@ -35,12 +35,16 @@ namespace Noteworthy
 								if (translationText != "")
 								{
 									mem.ConversationText = translationText;
-									NoteworthyApplication.NotifyMemorized();
+									NoteworthyApplication.NotifyMemorized(mem.StressStarterSentence);
+									Log.Debug("CheckNotifyActionReceiver", "Notifying Memory stored and transcribed!");
+									SQLClient<Memory>.Instance.InsertOrReplace(mem);
 								}
+								/*
 								else {
 									mem.ConversationText = "<transcribing>";
 								}
 								SQLClient<Memory>.Instance.InsertOrReplace(mem);
+								*/
 							}
 						}
 					}

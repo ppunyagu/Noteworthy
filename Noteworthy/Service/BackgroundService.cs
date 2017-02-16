@@ -43,10 +43,13 @@ namespace Noteworthy
 		Handler handler;
 		public bool isTranslating = false;
 
+		public string StressStarterSentence = "";
+
 		public const string ActionAudioRecorded = "ACTION_AUDIO_RECORDED";
 		public const string ActionCheckNotifyUser = "ACTION_NOTIFY_USER";
 		public const string ExtraAudioRecordedAbsolutePath = "EXTRA_AUDIORECORDED_ABSOLUTE_PATH";
 		public const string ExtraAudioRecordedDurations = "EXTRA_AUDIORECORDED_DURATIONS";
+		public const string ExtraStressStarterSentence = "EXTRA_STRESS_STARTER_SENTENCE";
 
 		public UUID RX_SERVICE_UUID = UUID.FromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
 		public UUID RX_CHAR_UUID = UUID.FromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
@@ -109,8 +112,9 @@ namespace Noteworthy
 		{
 			try
 			{
-				var ActionCheckNotifyUserIntent = new Intent(ActionCheckNotifyUser);
-				SendBroadcast(ActionCheckNotifyUserIntent);
+				// If want to only send once transcription completes
+				//var ActionCheckNotifyUserIntent = new Intent(ActionCheckNotifyUser);
+				//SendBroadcast(ActionCheckNotifyUserIntent);
 			}
 			catch (Exception ex)
 			{
@@ -189,6 +193,8 @@ namespace Noteworthy
 								{
 									AudioRecordedIntent.PutExtra(ExtraAudioRecordedAbsolutePath, AudioRecordedPath);
 									AudioRecordedIntent.PutExtra(ExtraAudioRecordedDurations, (stopWatch.ElapsedMilliseconds / 1000).ToString());
+									AudioRecordedIntent.PutExtra(ExtraStressStarterSentence, StressStarterSentence);
+									StressStarterSentence = "";
 								}
 								stopWatch.Reset();
 								SendBroadcast(AudioRecordedIntent);
@@ -302,6 +308,7 @@ namespace Noteworthy
 				if (matches != null && matches.Count > 0)
 				{
 					Log.Debug("OnResults", matches[0]);
+					StressStarterSentence = matches[0];
 					SpeechRecognitionStop();
 					Log.Debug("OnResults", "Pulse is stress, is not recording and is speaking! should start recording");
 					stopWatch.Start();
