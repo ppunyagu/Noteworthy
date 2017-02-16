@@ -122,6 +122,32 @@
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="packages.config" />
+    <None Include="WearableDevice\noteworthy\.DS_Store" />
+    <None Include="WearableDevice\noteworthy\UART.h" />
+    <None Include="WearableDevice\noteworthy\aci.h" />
+    <None Include="WearableDevice\noteworthy\aci_cmds.h" />
+    <None Include="WearableDevice\noteworthy\aci_evts.h" />
+    <None Include="WearableDevice\noteworthy\aci_protocol_defines.h" />
+    <None Include="WearableDevice\noteworthy\aci_queue.cpp" />
+    <None Include="WearableDevice\noteworthy\aci_queue.h" />
+    <None Include="WearableDevice\noteworthy\aci_setup.cpp" />
+    <None Include="WearableDevice\noteworthy\aci_setup.h" />
+    <None Include="WearableDevice\noteworthy\acilib.cpp" />
+    <None Include="WearableDevice\noteworthy\acilib.h" />
+    <None Include="WearableDevice\noteworthy\acilib_defs.h" />
+    <None Include="WearableDevice\noteworthy\acilib_if.h" />
+    <None Include="WearableDevice\noteworthy\acilib_types.h" />
+    <None Include="WearableDevice\noteworthy\ble_assert.h" />
+    <None Include="WearableDevice\noteworthy\boards.h" />
+    <None Include="WearableDevice\noteworthy\dtm.h" />
+    <None Include="WearableDevice\noteworthy\hal_aci_tl.cpp" />
+    <None Include="WearableDevice\noteworthy\hal_aci_tl.h" />
+    <None Include="WearableDevice\noteworthy\hal_platform.h" />
+    <None Include="WearableDevice\noteworthy\lib_aci.cpp" />
+    <None Include="WearableDevice\noteworthy\lib_aci.h" />
+    <None Include="WearableDevice\noteworthy\noteworthy.ino" />
+    <None Include="WearableDevice\noteworthy\services.h" />
+    <None Include="WearableDevice\noteworthy\uart_over_ble.h" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml" />
@@ -142,7 +168,6 @@
     <AndroidResource Include="Resources\values\Style.xml" />
     <AndroidResource Include="Resources\layout\MemoryMainLayout.axml" />
     <AndroidResource Include="Resources\values\color.xml" />
-    <AndroidResource Include="Resources\drawable\noteworthycenter.png" />
     <AndroidResource Include="Resources\drawable\noteworthyleft.png" />
     <AndroidResource Include="Resources\drawable\circle.png" />
     <AndroidResource Include="Resources\layout\RowSimpleTextLayout.axml" />
@@ -152,6 +177,7 @@
     <AndroidResource Include="Resources\drawable\stop.png" />
     <AndroidResource Include="Resources\drawable\icon3.png" />
     <AndroidResource Include="Resources\drawable\icon2.png" />
+    <AndroidResource Include="Resources\drawable\noteworthycenter.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
@@ -161,6 +187,7 @@
     <Folder Include="Receiver\" />
     <Folder Include="Helper\" />
     <Folder Include="Application\" />
+    <Folder Include="WearableDevice\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\OpenSans-Bold.ttf" />
