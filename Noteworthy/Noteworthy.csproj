@@ -116,6 +116,7 @@
     <Compile Include="Helper\FormUpload.cs" />
     <Compile Include="Service\BackgroundServiceNativeApproach.cs" />
     <Compile Include="Receiver\CheckNotifyActionReceiver.cs" />
+    <Compile Include="Helper\Sensitivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -178,6 +179,7 @@
     <AndroidResource Include="Resources\drawable\icon3.png" />
     <AndroidResource Include="Resources\drawable\icon2.png" />
     <AndroidResource Include="Resources\drawable\noteworthycenter.png" />
+    <AndroidResource Include="Resources\drawable\SettingsBlack.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />

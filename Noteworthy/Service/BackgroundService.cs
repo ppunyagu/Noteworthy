@@ -83,11 +83,11 @@ namespace Noteworthy
 					mGattCallback.dataReceivedFromDevice += actionDataReceivedFromDevice;
 					mBluetoothGatt = device.ConnectGatt(this, true, mGattCallback);
 				};
+				adapter.BluetoothLeScanner.StartScan(_scanCallBack);
 			}
 			else {
 				throw new Exception("Needs to be greated than API level 21.");
 			}
-			adapter.BluetoothLeScanner.StartScan(_scanCallBack);
 		}
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
@@ -157,7 +157,12 @@ namespace Noteworthy
 					Log.Debug("actionDataReceivedFromDevice", string.Format("StandardDeviation {0}", standardDeviation));
 
 					// Logic for isStress conditional statement => Background Recording
-					if (latestHeartRate > (average + standardDeviation) || latestHeartRate < (average - standardDeviation))
+					// User's preference either makes the deviation 0 or multiply it by 2
+					double UsersPref = 1 - (((Utility.sensitivityIndex - 50) * 2) / 100.0);
+					Log.Debug("SensitivityIndex", string.Format("sensitivityIndex: {0}", Utility.sensitivityIndex));
+					Log.Debug("UsersPref", string.Format("UsersPref: {0}", UsersPref));
+					Log.Debug("StandardDeviationAndUsersPref", string.Format("standardDeviation * UsersPref: {0}", standardDeviation * UsersPref));
+					if (latestHeartRate > (average + (standardDeviation * UsersPref)) || latestHeartRate < (average - (standardDeviation * UsersPref)))
 					{
 						Log.Debug("actionDataReceivedFromDevice", "isStress should start recording!");
 						if (!isRecording)

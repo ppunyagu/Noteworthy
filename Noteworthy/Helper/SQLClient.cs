@@ -17,6 +17,7 @@ namespace Noteworthy
 
 		private static Type[] DatabaseTypes = new Type[] {
 			typeof(Memory),
+			typeof(Sensitivity)
 		};
 
 		public DataBase()
@@ -49,6 +50,10 @@ namespace Noteworthy
 					{
 						var lst = SQLClient<Memory>.Instance.GetAll(OldDBConn);
 						SQLClient<Memory>.Instance.InsertAll(lst);
+					}
+					else if (tableType.Name.Equals("Sensitivity")) {
+						var lst = SQLClient<Sensitivity>.Instance.GetAll(OldDBConn);
+						SQLClient<Sensitivity>.Instance.InsertAll(lst);
 					}
 				}
 			}

@@ -31,6 +31,7 @@ namespace Noteworthy
 			// Set this on if want Audio Background: 
 			Utility.server_heartRate = "http://157.252.187.36:5000";
 			NoteworthyApplication.StartBackgroundService();
+
 			//NoteworthyApplication.StartBackgroundServiceNative();
 
 			// For testing
@@ -45,6 +46,16 @@ namespace Noteworthy
 
 			//DataBase Initalize
 			Utility.InitializeDatabase();
+
+			if (SQLClient<Sensitivity>.Instance.GetAll().Count > 0)
+			{
+				Utility.sensitivityIndex = SQLClient<Sensitivity>.Instance.GetAll().ToArray()[0].SensitivityIndex;
+			}
+			else {
+				Sensitivity _sen = new Sensitivity();
+				_sen.SensitivityIndex = 50;
+				SQLClient<Sensitivity>.Instance.Insert(_sen);
+			}
 
 			Recognizer = SpeechRecognizer.CreateSpeechRecognizer(this);
 			Recognizer.SetRecognitionListener(this);

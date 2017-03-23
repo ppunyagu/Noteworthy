@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Widget;
 using Android.OS;
+using Android.Util;
 using Android.Media;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace Noteworthy
 		SwipeRefreshLayout refresher;
 		LinearLayout lnrEmptyView;
 		LinearLayout lnrLoad;
+		ImageButton settingsBtn;
 		List<Memory> _lstMemories;
 		MemoryAdapter _memoryAdapter;
 		LinearLayoutManager lnrmanager;
@@ -51,6 +53,84 @@ namespace Noteworthy
 				lnrEmptyView.Visibility = ViewStates.Gone;
 
 				lnrLoad.Visibility = ViewStates.Visible;
+
+				settingsBtn = FindViewById<ImageButton>(Resource.Id.settingsBtn);
+
+				settingsBtn.Click += (sender, e) =>
+				{
+					AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, Resource.Style.CustomDialog);
+					alertDialog.SetMessage("Select Sensitivity For Conversation Detection:");
+
+					LinearLayout linear = new LinearLayout(this);
+					linear.Orientation = Android.Widget.Orientation.Vertical;
+
+					TextView text = new TextView(this);
+					text.SetPadding(50, 10, 10, 10);
+
+					SeekBar seek = new SeekBar(this);
+					seek.ScrollBarStyle = ScrollbarStyles.OutsideOverlay;
+					seek.ScrollBarSize = 50;
+					seek.SetMinimumWidth(200);
+					seek.SetMinimumHeight(30);
+					linear.AddView(seek);
+					linear.AddView(text);
+
+					Sensitivity sensitivity = SQLClient<Sensitivity>.Instance.GetAll().ToList()[0];
+
+					seek.Progress = sensitivity.SensitivityIndex;
+
+					if (seek.Progress >= 0 && seek.Progress < 33)
+					{
+						text.Text = "Low Sensitivity";
+						text.SetTextColor(Color.DarkGreen);
+					}
+					else if (seek.Progress >= 33 && seek.Progress < 66)
+					{
+						text.Text = "Medium Sensitivity";
+						text.SetTextColor(Color.DarkOrange);
+					}
+					else {
+						text.Text = "High Sensitivity";
+						text.SetTextColor(Color.Red);
+					}
+
+					seek.StopTrackingTouch += (object s, SeekBar.StopTrackingTouchEventArgs ev) =>
+					{
+						if (ev.SeekBar.Progress >= 0 && ev.SeekBar.Progress < 33)
+						{
+							text.Text = "Low Sensitivity";
+							text.SetTextColor(Color.DarkGreen);
+						}
+						else if (ev.SeekBar.Progress >= 33 && ev.SeekBar.Progress < 66)
+						{
+							text.Text = "Medium Sensitivity";
+							text.SetTextColor(Color.DarkOrange);
+						}
+						else {
+							text.Text = "High Sensitivity";
+							text.SetTextColor(Color.Red);
+						}
+					};
+
+					alertDialog.SetView(linear);
+
+					alertDialog.SetPositiveButton(
+						"OK",
+						delegate
+						{
+							sensitivity.SensitivityIndex = seek.Progress;
+							SQLClient<Sensitivity>.Instance.InsertOrReplace(sensitivity);
+							Utility.sensitivityIndex = seek.Progress;
+						}
+					);
+					alertDialog.SetNegativeButton(
+						"Cancel",
+						delegate { }
+					);
+					AlertDialog alert = alertDialog.Create();
+					alert.RequestWindowFeature((int)WindowFeatures.NoTitle);
+					alert.Show();
+				};
 
 				refresher.Enabled = false;
 
